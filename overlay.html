@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stream Overlay (Ceramah Agama)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800&family=Playfair+Display:ital,wght@0,600;1,600&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --accent-green: #00a859;
+            --bg-dark: rgba(0, 0, 0, 0.85);
+            --text-light: #ffffff;
+            --text-muted: #ccccce;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background: transparent;
+            width: 1920px;
+            height: 1080px;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        /* Lower Third Container */
+        #lower-third-container {
+            position: absolute;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80%;
+            max-width: 1400px;
+            display: flex;
+            align-items: stretch;
+            opacity: 0;
+            /* Animation properties */
+            transform: translate(-50%, 50px);
+            transition: opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1), transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        #lower-third-container.visible {
+            opacity: 1;
+            transform: translate(-50%, 0);
+        }
+
+        .lower-third-bg {
+            background: var(--bg-dark);
+            border-bottom: 8px solid var(--accent-green);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            width: 100%;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+            overflow: hidden;
+        }
+
+        /* Left Section (Mosque Logo) */
+        .logo-section {
+            background: var(--accent-green);
+            padding: 20px 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            box-sizing: border-box;
+        }
+
+        .logo-section img.brand-logo {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+        }
+
+        /* Center Section (Text Elements) */
+        .text-section {
+            flex-grow: 1;
+            padding: 24px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .subtitle {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: 28px;
+            color: var(--accent-green);
+            margin: 0 0 4px 0;
+            font-weight: 600;
+        }
+
+        .title {
+            font-size: 56px;
+            color: var(--text-light);
+            margin: 0;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Right Section (QR Code) */
+        .qr-section {
+            padding: 20px 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-left: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .qr-placeholder {
+            width: 100px;
+            height: 100px;
+            background: #ffffff;
+            padding: 6px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .qr-placeholder img.qr-image {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 4px;
+        }
+
+        .qr-text {
+            color: var(--text-light);
+            font-size: 14px;
+            margin-top: 8px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="lower-third-container">
+        <div class="lower-third-bg">
+            <!-- Left: Mosque Logo -->
+            <div class="logo-section">
+                <!-- Mosque Logo Image -->
+                <img src="img/logo.png" alt="Mosque Logo" class="brand-logo" />
+            </div>
+
+            <!-- Center: Text Info -->
+            <div class="text-section">
+                <h2 class="subtitle">Penceramah Jemputan</h2>
+                <h1 class="title" id="displayName">Nama Penceramah</h1>
+            </div>
+
+            <!-- Right: QR Support -->
+            <div class="qr-section">
+                <div class="qr-placeholder">
+                    <!-- QR Code Image -->
+                    <img src="img/qr.jpeg" alt="QR Code Sumbangan" class="qr-image" />
+                </div>
+                <div class="qr-text">Sumbangan</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="./firebase-config.js"></script>
+    <script src="./firebase-config.js"></script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
+        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-database.js";
+
+        const app = initializeApp(window.firebaseConfig);
+        const db = getDatabase(app);
+        const overlayRef = ref(db, 'ceramah_overlay');
+
+        onValue(overlayRef, (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                const container = document.getElementById('lower-third-container');
+                const nameDisplay = document.getElementById('displayName');
+
+                nameDisplay.innerText = data.name;
+
+                if (data.isVisible) {
+                    container.classList.add('visible');
+                } else {
+                    container.classList.remove('visible');
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

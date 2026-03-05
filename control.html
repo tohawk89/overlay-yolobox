@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Stream Control Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #00a859;
+            --primary-dark: #008f4c;
+            --danger: #ef4444;
+            --danger-dark: #cc3939;
+            --bg-color: #f0fdf4;
+            --card-bg: #ffffff;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --border: #e5e7eb;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+            padding: 20px;
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        /* --- Login Overlay --- */
+        #login-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(5px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 0.4s ease, visibility 0.4s ease;
+        }
+
+        #login-overlay.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .login-card {
+            background: var(--card-bg);
+            padding: 40px 30px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+
+        .login-card h2 {
+            margin: 0 0 20px 0;
+            color: var(--primary);
+        }
+
+        /* --- Main Dashboard --- */
+        .dashboard {
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 30px 24px;
+            box-shadow: 0 10px 25px rgba(0, 168, 89, 0.1);
+            display: none;
+            /* hidden until logged in */
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .dashboard.visible {
+            display: flex;
+        }
+
+        .header {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin: 0;
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            background: #f3f4f6;
+            color: var(--text-muted);
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .status-badge.connected {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+        .section {
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+        }
+
+        .section-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin: 0 0 16px 0;
+        }
+
+        /* Inputs & Buttons */
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 16px 20px;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            font-size: 18px;
+            font-family: inherit;
+            box-sizing: border-box;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            background: #ffffff;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(0, 168, 89, 0.1);
+        }
+
+        button {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.1s, background-color 0.2s;
+            color: #ffffff;
+            box-sizing: border-box;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            margin-top: 16px;
+            box-shadow: 0 4px 12px rgba(0, 168, 89, 0.3);
+        }
+
+        .btn-primary:active {
+            background: var(--primary-dark);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            padding: 14px;
+        }
+
+        .btn-show {
+            background: var(--primary);
+            box-shadow: 0 6px 16px rgba(0, 168, 89, 0.3);
+            font-size: 18px;
+        }
+
+        .btn-show:active {
+            background: var(--primary-dark);
+        }
+
+        .btn-hide {
+            background: var(--danger);
+            box-shadow: 0 6px 16px rgba(239, 68, 68, 0.3);
+            font-size: 18px;
+        }
+
+        .btn-hide:active {
+            background: var(--danger-dark);
+        }
+
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        /* Feedback Toast */
+        #toast {
+            position: fixed;
+            bottom: -60px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1f2937;
+            color: white;
+            padding: 14px 24px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 600;
+            transition: bottom 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 2000;
+        }
+
+        #toast.show {
+            bottom: 30px;
+        }
+
+        .fetch-status {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 8px;
+            display: block;
+            text-align: center;
+        }
+
+        .error-msg {
+            color: var(--danger);
+            font-size: 14px;
+            margin-top: 10px;
+            display: none;
+            font-weight: 600;
+        }
+
+        /* CSV File & List Styles */
+        .file-input {
+            width: 100%;
+            padding: 20px;
+            border: 2px dashed var(--primary);
+            border-radius: 12px;
+            font-size: 14px;
+            font-family: inherit;
+            background: rgba(0, 168, 89, 0.05);
+            cursor: pointer;
+            box-sizing: border-box;
+            color: var(--text-main);
+            transition: background 0.2s;
+        }
+
+        .file-input:hover {
+            background: rgba(0, 168, 89, 0.1);
+        }
+
+        .session-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 16px;
+            max-height: 250px;
+            overflow-y: auto;
+            padding-right: 4px;
+            /* for scrollbar */
+        }
+
+        .session-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            gap: 12px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+        }
+
+        .session-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            overflow: hidden;
+        }
+
+        .session-title-item {
+            font-weight: 700;
+            color: var(--primary-dark);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-size: 15px;
+        }
+
+        .session-time {
+            font-size: 13px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .use-btn {
+            padding: 8px 14px;
+            font-size: 12px;
+            border-radius: 8px;
+            white-space: nowrap;
+            margin: 0;
+            width: auto;
+        }
+
+        /* Custom Scrollbar for Session List */
+        .session-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .session-list::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .session-list::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Login Overlay -->
+    <div id="login-overlay">
+        <div class="login-card">
+            <svg style="width: 48px; height: 48px; fill: var(--primary); margin-bottom: 12px;" viewBox="0 0 24 24">
+                <path
+                    d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z" />
+            </svg>
+            <h2>Admin Login</h2>
+            <input type="password" id="passwordInput" placeholder="Enter Password">
+            <div id="loginError" class="error-msg">Incorrect Password</div>
+            <button class="btn-primary" onclick="verifyLogin()">Unlock Dashboard</button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="dashboard" id="main-dashboard">
+            <div class="header">
+                <h1>Ceramah Control</h1>
+                <div id="status" class="status-badge">
+                    <div class="dot"></div>
+                    <span>Connecting...</span>
+                </div>
+            </div>
+
+            <div class="section">
+                <h3 class="section-title">Schedule Sync (CSV)</h3>
+                <input type="file" id="csvFileInput" accept=".csv" class="file-input">
+                <div id="csvDataContainer" class="session-list" style="display: none;"></div>
+            </div>
+
+            <div class="section">
+                <h3 class="section-title">Manual Override</h3>
+                <input type="text" id="inputName" placeholder="Nama Penceramah...">
+            </div>
+
+            <div class="btn-group">
+                <button class="btn-show" onclick="updateOverlay(true)">SHOW ON STREAM</button>
+                <button class="btn-hide" onclick="updateOverlay(false)">HIDE OVERLAY</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Feedback Toast -->
+    <div id="toast">Data Pushed Successfully!</div>
+
+    <script src="./firebase-config.js"></script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
+        import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-database.js";
+
+        // Global Login Logic
+        const CORRECT_PASSWORD = window.firebaseConfig.adminPassword || "admin";
+
+        window.verifyLogin = function () {
+            const input = document.getElementById('passwordInput').value;
+            const errorElement = document.getElementById('loginError');
+            if (input === CORRECT_PASSWORD) {
+                document.getElementById('login-overlay').classList.add('hidden');
+                document.getElementById('main-dashboard').classList.add('visible');
+            } else {
+                errorElement.style.display = 'block';
+                setTimeout(() => { errorElement.style.display = 'none'; }, 3000);
+            }
+        };
+
+        // CSV Parser Logic
+        document.getElementById('csvFileInput').addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function (event) {
+                const text = event.target.result;
+                parseAndRenderCSV(text);
+            };
+            reader.readAsText(file);
+        });
+
+        function parseAndRenderCSV(csvText) {
+            const lines = csvText.split('\n').filter(line => line.trim() !== '');
+            if (lines.length < 2) return; // Need headers + at least 1 row
+
+            // Assume headers: Subject, Start Date, Start Time, End Date, End Time
+            const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
+
+            // Match Subject dynamically or fallback
+            const subjectIdx = headers.findIndex(h => h.includes('subject')) !== -1 ? headers.findIndex(h => h.includes('subject')) : 0;
+            const dateIdx = headers.findIndex(h => h.includes('date')) !== -1 ? headers.findIndex(h => h.includes('date')) : 1;
+            const timeIdx = headers.findIndex(h => h.includes('time')) !== -1 ? headers.findIndex(h => h.includes('time')) : 2;
+
+            const container = document.getElementById('csvDataContainer');
+            container.innerHTML = ''; // clear existing UI
+            container.style.display = 'flex';
+
+            for (let i = 1; i < lines.length; i++) {
+                // simple CSV logic fallback
+                const cols = lines[i].split(',').map(c => c.trim().replace(/^"|"$/g, ''));
+                if (cols.length < 2) continue;
+
+                const subject = cols[subjectIdx] || 'Unknown';
+                const date = cols[dateIdx] || '';
+                const time = cols[timeIdx] || '';
+
+                const sessionItem = document.createElement('div');
+                sessionItem.className = 'session-item';
+
+                const infoDiv = document.createElement('div');
+                infoDiv.className = 'session-info';
+
+                const titleDiv = document.createElement('div');
+                titleDiv.className = 'session-title-item';
+                titleDiv.innerText = subject;
+
+                const timeDiv = document.createElement('div');
+                timeDiv.className = 'session-time';
+                timeDiv.innerText = `${date} ${time}`.trim();
+
+                infoDiv.appendChild(titleDiv);
+                infoDiv.appendChild(timeDiv);
+
+                const useBtn = document.createElement('button');
+                useBtn.className = 'btn-outline use-btn';
+                useBtn.innerText = 'Use speaker';
+                useBtn.onclick = function () {
+                    document.getElementById('inputName').value = subject;
+                    showToast("Speaker Selected!");
+                };
+
+                sessionItem.appendChild(infoDiv);
+                sessionItem.appendChild(useBtn);
+                container.appendChild(sessionItem);
+            }
+        }
+
+        const app = initializeApp(window.firebaseConfig);
+        const db = getDatabase(app);
+
+        // Connection status monitoring
+        const connectedRef = ref(db, ".info/connected");
+        const statusEl = document.getElementById('status');
+        const statusText = statusEl.querySelector('span');
+
+        onValue(connectedRef, (snap) => {
+            if (snap.val() === true) {
+                statusText.innerText = "Connected";
+                statusEl.classList.add('connected');
+            } else {
+                statusText.innerText = "Disconnected";
+                statusEl.classList.remove('connected');
+            }
+        });
+
+        // Toast Feedback functionality
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.innerText = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2500);
+        }
+
+        window.updateOverlay = function (isVisible) {
+            const name = document.getElementById('inputName').value || "Sila Masukkan Nama";
+
+            set(ref(db, 'ceramah_overlay'), {
+                name: name,
+                isVisible: isVisible,
+                updatedAt: Date.now()
+            }).then(() => {
+                if (isVisible) {
+                    showToast("Shown on Stream!");
+                } else {
+                    showToast("Overlay Hidden!");
+                }
+            }).catch(err => {
+                showToast("Error updating!");
+            });
+        };
+    </script>
+</body>
+
+</html>
