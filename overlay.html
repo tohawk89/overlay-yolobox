@@ -12,10 +12,14 @@
         rel="stylesheet">
     <style>
         :root {
-            --accent-green: #00a859;
-            --bg-dark: rgba(0, 0, 0, 0.85);
-            --text-light: #ffffff;
-            --text-muted: #ccccce;
+            --blue-masjid: #11429b;
+            /* Solid Blue Logo background */
+            --bar-top: #ffffff;
+            /* White Subtitle background */
+            --bar-bottom: #000000;
+            /* Black Title background */
+            --text-top: #000000;
+            --text-bottom: #ffffff;
         }
 
         body {
@@ -28,99 +32,143 @@
             font-family: 'Montserrat', sans-serif;
         }
 
-        /* Lower Third Container */
         #lower-third-container {
             position: absolute;
-            bottom: 80px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 80%;
-            max-width: 1400px;
+            bottom: 40px;
+            /* Floating above the bottom */
+            left: 0;
+            width: 100%;
+            height: 160px;
+            /* Taller */
             display: flex;
-            align-items: stretch;
             opacity: 0;
-            /* Animation properties */
-            transform: translate(-50%, 50px);
+            transform: translateY(150%);
             transition: opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1), transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
         #lower-third-container.visible {
             opacity: 1;
-            transform: translate(-50%, 0);
+            transform: translateY(0);
         }
 
-        .lower-third-bg {
-            background: var(--bg-dark);
-            border-bottom: 8px solid var(--accent-green);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            width: 100%;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
-            overflow: hidden;
-        }
-
-        /* Left Section (Mosque Logo) */
+        /* Logo Section */
         .logo-section {
-            background: var(--accent-green);
-            padding: 20px 30px;
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            height: 160px;
+            width: 270px;
+            /* Tighter against the logo */
+            background: var(--blue-masjid);
+            /* Angle matches the original image. Top right leans in. */
+            clip-path: polygon(0 0, 75% 0, 100% 100%, 0% 100%);
             display: flex;
-            justify-content: center;
+            justify-content: flex-start;
             align-items: center;
-            height: 100%;
-            box-sizing: border-box;
+            padding-left: 40px;
+            z-index: 10;
         }
 
         .logo-section img.brand-logo {
-            width: 80px;
-            height: 80px;
+            width: 140px;
+            height: 130px;
             object-fit: contain;
         }
 
-        /* Center Section (Text Elements) */
-        .text-section {
-            flex-grow: 1;
-            padding: 24px 40px;
+        /* Bars Container */
+        .bars-container {
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            height: 160px;
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            z-index: 1;
+        }
+
+        /* Top Bar */
+        .bar-top {
+            background: var(--bar-top);
+            height: 65px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            /* Increased padding to clear the slanted blue box */
+            padding-left: 320px;
+            padding-right: 220px;
+            /* Pushed left for larger QR */
         }
 
         .subtitle {
-            font-family: 'Playfair Display', serif;
-            font-style: italic;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 38px;
+            font-weight: 800;
+            color: var(--text-top);
+            margin: 0;
+            letter-spacing: -0.5px;
+        }
+
+        .qr-text {
+            font-family: 'Montserrat', sans-serif;
             font-size: 28px;
-            color: var(--accent-green);
-            margin: 0 0 4px 0;
-            font-weight: 600;
+            font-weight: 800;
+            color: var(--text-top);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .arrow {
+            font-size: 36px;
+            line-height: 1;
+        }
+
+        /* Bottom Bar */
+        .bar-bottom {
+            background: var(--bar-bottom);
+            flex-grow: 1;
+            /* Automatically takes remaining 95px */
+            display: flex;
+            align-items: center;
+            /* Increased padding to clear the slanted blue box */
+            padding-left: 380px;
+            padding-right: 220px;
         }
 
         .title {
-            font-size: 56px;
-            color: var(--text-light);
-            margin: 0;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 64px;
             font-weight: 800;
+            color: var(--text-bottom);
+            margin: 0;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            letter-spacing: 0px;
         }
 
-        /* Right Section (QR Code) */
+        /* QR Section */
         .qr-section {
-            padding: 20px 40px;
+            position: absolute;
+            right: 40px;
+            bottom: 0;
+            height: 160px;
+            /* Span full container height */
+            width: 160px;
+            background: var(--bar-top);
+            /* White box to frame QR */
+            box-sizing: border-box;
+            z-index: 10;
             display: flex;
-            flex-direction: column;
-            align-items: center;
             justify-content: center;
-            border-left: 2px solid rgba(255, 255, 255, 0.1);
+            align-items: center;
+            /* Thinner padding to match image */
+            padding: 8px;
         }
 
         .qr-placeholder {
-            width: 100px;
-            height: 100px;
+            width: 100%;
+            height: 100%;
             background: #ffffff;
-            padding: 6px;
-            border-radius: 8px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -130,42 +178,34 @@
             width: 100%;
             height: 100%;
             object-fit: contain;
-            border-radius: 4px;
-        }
-
-        .qr-text {
-            color: var(--text-light);
-            font-size: 14px;
-            margin-top: 8px;
-            font-weight: 700;
-            letter-spacing: 1px;
-            text-transform: uppercase;
         }
     </style>
 </head>
 
 <body>
     <div id="lower-third-container">
-        <div class="lower-third-bg">
-            <!-- Left: Mosque Logo -->
-            <div class="logo-section">
-                <!-- Mosque Logo Image -->
-                <img src="img/logo.png" alt="Mosque Logo" class="brand-logo" />
-            </div>
+        <!-- Blue Logo Section (left edge, slanted) -->
+        <div class="logo-section">
+            <img src="img/logo.png" alt="Mosque Logo" class="brand-logo" />
+        </div>
 
-            <!-- Center: Text Info -->
-            <div class="text-section">
-                <h2 class="subtitle">Penceramah Jemputan</h2>
+        <!-- Right Side Bars Container -->
+        <div class="bars-container">
+            <!-- Top White Bar -->
+            <div class="bar bar-top">
+                <h2 class="subtitle">Kuliah Maghrib</h2>
+                <div class="qr-text">Tabung Masjid <span class="arrow">➔</span></div>
+            </div>
+            <!-- Bottom Black Bar -->
+            <div class="bar bar-bottom">
                 <h1 class="title" id="displayName">Nama Penceramah</h1>
             </div>
+        </div>
 
-            <!-- Right: QR Support -->
-            <div class="qr-section">
-                <div class="qr-placeholder">
-                    <!-- QR Code Image -->
-                    <img src="img/qr.jpeg" alt="QR Code Sumbangan" class="qr-image" />
-                </div>
-                <div class="qr-text">Sumbangan</div>
+        <!-- Right-aligned QR Code Overlay -->
+        <div class="qr-section">
+            <div class="qr-placeholder">
+                <img src="img/qr.jpeg" alt="QR Code Sumbangan" class="qr-image" />
             </div>
         </div>
     </div>
