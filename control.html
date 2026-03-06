@@ -13,7 +13,6 @@
             --primary: #00a859;
             --primary-dark: #008f4c;
             --danger: #ef4444;
-            --danger-dark: #cc3939;
             --bg-color: #f0fdf4;
             --card-bg: #ffffff;
             --text-main: #1f2937;
@@ -559,12 +558,20 @@
     </div>
 
     <!-- Feedback Toast -->
-    <div id="toast">Data Pushed Successfully!</div>
+    <div id="toast"></div>
 
     <script src="./firebase-config.js"></script>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
         import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-database.js";
+
+        // Helper to parse DD/MM/YYYY and HH:MM:SS
+        const parseDateTime = (d, t) => {
+            if (!d || !t) return null;
+            const [day, month, year] = d.split('/').map(Number);
+            const [hour, min, sec] = t.split(':').map(Number);
+            return new Date(year, month - 1, day, hour, min, sec);
+        };
 
         // Global Login Logic
         const CORRECT_PASSWORD = window.firebaseConfig.adminPassword || "admin";
@@ -639,13 +646,6 @@
             const endTimeIdx = headers.indexOf('end-time') !== -1 ? headers.indexOf('end-time') : headers.indexOf('end time');
             const descIdx = headers.indexOf('description');
 
-            const parseDateTime = (d, t) => {
-                if (!d || !t) return null;
-                const [day, month, year] = d.split('/').map(Number);
-                const [hour, min, sec] = t.split(':').map(Number);
-                return new Date(year, month - 1, day, hour, min, sec);
-            };
-
             const scheduleData = [];
 
             for (let i = 1; i < lines.length; i++) {
@@ -711,14 +711,6 @@
             container.innerHTML = '';
 
             const now = new Date();
-
-            // Helper to parse DD/MM/YYYY and HH:MM:SS
-            const parseDateTime = (d, t) => {
-                if (!d || !t) return null;
-                const [day, month, year] = d.split('/').map(Number);
-                const [hour, min, sec] = t.split(':').map(Number);
-                return new Date(year, month - 1, day, hour, min, sec);
-            };
 
             // Filter out past events
             const filteredData = scheduleData.filter(item => {
