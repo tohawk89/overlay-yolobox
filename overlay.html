@@ -60,7 +60,7 @@
             width: 12.9vw;
             /* Narrowed: Solid (9.4vw) + Slant (3.5vw) */
             background: var(--blue-masjid);
-            clip-path: polygon(0 0, 72.8% 0, 100% 100%, 0% 100%);
+            clip-path: polygon(0 0, 65% 0, 100% 100%, 0% 100%);
             display: flex;
             justify-content: flex-start;
             align-items: center;
@@ -109,6 +109,7 @@
             font-weight: 800;
             color: var(--text-top);
             margin: 0;
+            margin-left: 3vw;
             letter-spacing: -0.05vw;
         }
 
@@ -122,10 +123,11 @@
             gap: 0.5vw;
         }
 
-        .arrow {
-            font-size: 1.46vw;
-            /* 28px / 1920px */
-            line-height: 1;
+        .arrow-svg {
+            width: 1.5vw;
+            height: 1.5vw;
+            display: inline-block;
+            vertical-align: middle;
         }
 
         /* Bottom Bar */
@@ -134,7 +136,7 @@
             flex-grow: 1;
             display: flex;
             align-items: center;
-            padding-left: 14vw;
+            padding-left: 15vw;
             /* Adjusted for tighter slant */
             padding-right: 8.3vw;
         }
@@ -145,6 +147,7 @@
             font-weight: 800;
             color: var(--text-bottom);
             margin: 0;
+            margin-left: 0.5vw;
             text-transform: uppercase;
             letter-spacing: 0px;
         }
@@ -195,7 +198,11 @@
             <!-- Top White Bar -->
             <div class="bar bar-top">
                 <h2 class="subtitle" id="displayTitle">Kuliah Maghrib</h2>
-                <div class="qr-text">Tabung Masjid <span class="arrow">➔</span></div>
+                <div class="qr-text">Tabung Masjid
+                    <svg class="arrow-svg" viewBox="0 0 100 100">
+                        <path d="M10 45h50V25l30 25-30 25V55H10z" fill="currentColor" />
+                    </svg>
+                </div>
             </div>
             <!-- Bottom Black Bar -->
             <div class="bar bar-bottom">
