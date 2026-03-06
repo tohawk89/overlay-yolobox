@@ -523,21 +523,44 @@
             const lines = csvText.split('\n').filter(line => line.trim() !== '');
             if (lines.length < 2) return;
 
-            const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
-            const subjectIdx = headers.findIndex(h => h.includes('subject')) !== -1 ? headers.findIndex(h => h.includes('subject')) : 0;
-            const dateIdx = headers.findIndex(h => h.includes('date')) !== -1 ? headers.findIndex(h => h.includes('date')) : 1;
-            const timeIdx = headers.findIndex(h => h.includes('time')) !== -1 ? headers.findIndex(h => h.includes('time')) : 2;
+            // Basic CSV parser that handles quotes
+            const parseCSVLine = (text) => {
+                const result = [];
+                let cell = '';
+                let inQuotes = false;
+                for (let i = 0; i < text.length; i++) {
+                    const char = text[i];
+                    if (char === '"') inQuotes = !inQuotes;
+                    else if (char === ',' && !inQuotes) {
+                        result.push(cell.trim());
+                        cell = '';
+                    } else cell += char;
+                }
+                result.push(cell.trim());
+                return result.map(c => c.replace(/^"|"$/g, ''));
+            };
+
+            const headers = parseCSVLine(lines[0]).map(h => h.toLowerCase());
+            const subjectIdx = headers.indexOf('subject');
+            const startDateIdx = headers.indexOf('start date');
+            const startTimeIdx = headers.indexOf('start time');
+            const endDateIdx = headers.indexOf('end date');
+            const endTimeIdx = headers.indexOf('end-time') !== -1 ? headers.indexOf('end-time') : headers.indexOf('end time');
+            const descIdx = headers.indexOf('description');
 
             const scheduleData = [];
 
             for (let i = 1; i < lines.length; i++) {
-                const cols = lines[i].split(',').map(c => c.trim().replace(/^"|"$/g, ''));
-                if (cols.length < 2) continue;
+                const cols = parseCSVLine(lines[i]);
+                if (cols.length < headers.length) continue;
 
                 scheduleData.push({
-                    subject: cols[subjectIdx] || 'Unknown',
-                    date: cols[dateIdx] || '',
-                    time: cols[timeIdx] || ''
+                    subject: cols[subjectIdx] || '',
+                    description: cols[descIdx] || '',
+                    startDate: cols[startDateIdx] || '',
+                    startTime: cols[startTimeIdx] || '',
+                    endDate: cols[endDateIdx] || '',
+                    endTime: cols[endTimeIdx] || ''
                 });
             }
 
@@ -569,7 +592,27 @@
             listState.style.display = 'block';
             container.innerHTML = '';
 
-            scheduleData.forEach(item => {
+            const now = new Date();
+
+            // Helper to parse DD/MM/YYYY and HH:MM:SS
+            const parseDateTime = (d, t) => {
+                if (!d || !t) return null;
+                const [day, month, year] = d.split('/').map(Number);
+                const [hour, min, sec] = t.split(':').map(Number);
+                return new Date(year, month - 1, day, hour, min, sec);
+            };
+
+            // Filter out past events (older than 10 mins ago to give some buffer)
+            const filteredData = scheduleData.filter(item => {
+                const endTime = parseDateTime(item.endDate, item.endTime);
+                return endTime && (endTime.getTime() > (now.getTime() - 600000));
+            });
+
+            if (filteredData.length === 0) {
+                container.innerHTML = '<div style="text-align:center; padding: 20px; color: var(--text-muted); font-size:14px;">All scheduled events have passed.</div>';
+            }
+
+            filteredData.forEach(item => {
                 const sessionItem = document.createElement('div');
                 sessionItem.className = 'session-item';
 
@@ -578,12 +621,19 @@
 
                 const titleDiv = document.createElement('div');
                 titleDiv.className = 'session-title-item';
-                titleDiv.innerText = item.subject;
+                titleDiv.innerText = item.description || item.subject;
+
+                const subDiv = document.createElement('div');
+                subDiv.style.fontSize = '12px';
+                subDiv.style.color = 'var(--primary)';
+                subDiv.style.fontWeight = '600';
+                subDiv.innerText = item.subject;
 
                 const timeDiv = document.createElement('div');
                 timeDiv.className = 'session-time';
-                timeDiv.innerText = `${item.date} ${item.time}`.trim();
+                timeDiv.innerText = `${item.startDate} ${item.startTime} - ${item.endTime}`;
 
+                infoDiv.appendChild(subDiv);
                 infoDiv.appendChild(titleDiv);
                 infoDiv.appendChild(timeDiv);
 
@@ -591,7 +641,8 @@
                 useBtn.className = 'btn-outline use-btn';
                 useBtn.innerText = 'Use speaker';
                 useBtn.onclick = function () {
-                    document.getElementById('inputName').value = item.subject;
+                    document.getElementById('inputTitle').value = item.subject;
+                    document.getElementById('inputName').value = item.description;
                     showToast("Speaker Selected!");
                 };
 

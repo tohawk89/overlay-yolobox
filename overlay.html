@@ -226,26 +226,72 @@
         const app = initializeApp(window.firebaseConfig);
         const db = getDatabase(app);
         const overlayRef = ref(db, 'ceramah_overlay');
+        const scheduleRef = ref(db, 'ceramah_schedule');
 
+        let scheduleData = [];
+        let manualOverlayState = { isVisible: false, name: '', title: '' };
+
+        // Helper to parse DD/MM/YYYY and HH:MM:SS
+        const parseDateTime = (d, t) => {
+            if (!d || !t) return null;
+            const [day, month, year] = d.split('/').map(Number);
+            const [hour, min, sec] = t.split(':').map(Number);
+            return new Date(year, month - 1, day, hour, min, sec);
+        };
+
+        function updateUI(name, title, isVisible) {
+            const container = document.getElementById('lower-third-container');
+            const nameDisplay = document.getElementById('displayName');
+            const titleDisplay = document.getElementById('displayTitle');
+
+            nameDisplay.innerText = name || '';
+            if (title) titleDisplay.innerText = title;
+
+            if (isVisible) {
+                container.classList.add('visible');
+            } else {
+                container.classList.remove('visible');
+            }
+        }
+
+        function checkAutomaticSchedule() {
+            const now = new Date();
+            let activeSession = null;
+
+            if (Array.isArray(scheduleData)) {
+                activeSession = scheduleData.find(item => {
+                    const start = parseDateTime(item.startDate, item.startTime);
+                    const end = parseDateTime(item.endDate, item.endTime);
+                    return start && end && now >= start && now <= end;
+                });
+            }
+
+            if (activeSession) {
+                // Auto Mode: Active event found
+                updateUI(activeSession.description, activeSession.subject, true);
+            } else {
+                // No active event: Fallback to manual control
+                updateUI(manualOverlayState.name, manualOverlayState.title, manualOverlayState.isVisible);
+            }
+        }
+
+        // Listen for Manual Overrides
         onValue(overlayRef, (snapshot) => {
             const data = snapshot.val();
             if (data) {
-                const container = document.getElementById('lower-third-container');
-                const nameDisplay = document.getElementById('displayName');
-                const titleDisplay = document.getElementById('displayTitle');
-
-                nameDisplay.innerText = data.name;
-                if (data.title) {
-                    titleDisplay.innerText = data.title;
-                }
-
-                if (data.isVisible) {
-                    container.classList.add('visible');
-                } else {
-                    container.classList.remove('visible');
-                }
+                manualOverlayState = data;
+                checkAutomaticSchedule();
             }
         });
+
+        // Listen for Schedule Changes
+        onValue(scheduleRef, (snapshot) => {
+            scheduleData = snapshot.val() || [];
+            checkAutomaticSchedule();
+        });
+
+        // Background check every 30 seconds for time-based triggers
+        setInterval(checkAutomaticSchedule, 30000);
     </script>
 </body>
 
