@@ -635,6 +635,13 @@
             const endTimeIdx = headers.indexOf('end-time') !== -1 ? headers.indexOf('end-time') : headers.indexOf('end time');
             const descIdx = headers.indexOf('description');
 
+            const parseDateTime = (d, t) => {
+                if (!d || !t) return null;
+                const [day, month, year] = d.split('/').map(Number);
+                const [hour, min, sec] = t.split(':').map(Number);
+                return new Date(year, month - 1, day, hour, min, sec);
+            };
+
             const scheduleData = [];
 
             for (let i = 1; i < lines.length; i++) {
@@ -650,6 +657,14 @@
                     endTime: cols[endTimeIdx] || ''
                 });
             }
+
+            scheduleData.sort((a, b) => {
+                const dateA = parseDateTime(a.startDate, a.startTime);
+                const dateB = parseDateTime(b.startDate, b.startTime);
+                if (!dateA) return 1;
+                if (!dateB) return -1;
+                return dateA - dateB;
+            });
 
             set(ref(db, 'ceramah_schedule'), scheduleData)
                 .then(() => showToast("Schedule Uploaded!"))
@@ -701,10 +716,10 @@
                 return new Date(year, month - 1, day, hour, min, sec);
             };
 
-            // Filter out past events (older than 10 mins ago to give some buffer)
+            // Filter out past events
             const filteredData = scheduleData.filter(item => {
                 const endTime = parseDateTime(item.endDate, item.endTime);
-                return endTime && (endTime.getTime() > (now.getTime() - 600000));
+                return endTime && endTime.getTime() > now.getTime();
             });
 
             if (filteredData.length === 0) {
@@ -770,10 +785,15 @@
         });
 
         // Schedule Persistence Monitoring
+        let lastScheduleData = null;
         const scheduleRef = ref(db, 'ceramah_schedule');
         onValue(scheduleRef, (snapshot) => {
-            renderSchedule(snapshot.val());
+            lastScheduleData = snapshot.val();
+            renderSchedule(lastScheduleData);
         });
+
+        // Re-render every 30s so past events are hidden without needing a Firebase update
+        setInterval(() => renderSchedule(lastScheduleData), 30000);
 
         // Toast Feedback functionality
         function showToast(message) {
