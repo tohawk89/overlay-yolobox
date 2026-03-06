@@ -221,7 +221,7 @@
     <script src="./firebase-config.js"></script>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
-        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-database.js";
+        import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-database.js";
 
         const app = initializeApp(window.firebaseConfig);
         const db = getDatabase(app);
@@ -229,7 +229,8 @@
         const scheduleRef = ref(db, 'ceramah_schedule');
 
         let scheduleData = [];
-        let manualOverlayState = { isVisible: false, name: '', title: '' };
+        let manualOverlayState = { isVisible: true, name: '', title: '' };
+        let lastActiveSessionKey = null;
 
         // Helper to parse DD/MM/YYYY and HH:MM:SS
         const parseDateTime = (d, t) => {
@@ -267,15 +268,30 @@
             }
 
             if (activeSession) {
-                // Auto Mode: Active event found
-                updateUI(activeSession.description, activeSession.subject, true);
+                const sessionKey = `${activeSession.startDate}_${activeSession.startTime}`;
+
+                if (sessionKey !== lastActiveSessionKey) {
+                    // New session detected — write to Firebase to reset state and sync control panel
+                    lastActiveSessionKey = sessionKey;
+                    set(ref(db, 'ceramah_overlay'), {
+                        title: activeSession.subject,
+                        name: activeSession.description,
+                        isVisible: true,
+                        updatedAt: Date.now()
+                    });
+                    // Will re-trigger via onValue, so UI update handled there
+                } else {
+                    // Same session — respect current isVisible from control panel
+                    updateUI(activeSession.description, activeSession.subject, manualOverlayState.isVisible);
+                }
             } else {
-                // No active event: Fallback to manual control
-                updateUI(manualOverlayState.name, manualOverlayState.title, manualOverlayState.isVisible);
+                // No active session — reset key and always hide
+                lastActiveSessionKey = null;
+                updateUI('', '', false);
             }
         }
 
-        // Listen for Manual Overrides
+        // Listen for overlay state changes (from control panel or self-writes)
         onValue(overlayRef, (snapshot) => {
             const data = snapshot.val();
             if (data) {
@@ -290,8 +306,8 @@
             checkAutomaticSchedule();
         });
 
-        // Background check every 30 seconds for time-based triggers
-        setInterval(checkAutomaticSchedule, 30000);
+        // Check every 10 seconds for session transitions (no Firebase calls, local only)
+        setInterval(checkAutomaticSchedule, 10000);
     </script>
 </body>
 

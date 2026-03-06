@@ -528,15 +528,15 @@
             </div>
 
             <div class="section">
-                <h3 class="section-title">Manual Override</h3>
+                <h3 class="section-title">Current Event</h3>
                 <input type="text" id="inputTitle" placeholder="Program Title (e.g. Kuliah Maghrib)"
                     value="Penceramah Jemputan" style="margin-bottom: 12px;">
                 <input type="text" id="inputName" placeholder="Nama Penceramah...">
             </div>
 
             <div class="btn-group">
-                <button class="btn-show" onclick="updateOverlay(true)">SHOW ON STREAM</button>
-                <button class="btn-hide" onclick="updateOverlay(false)">HIDE OVERLAY</button>
+                <button class="btn-show" onclick="saveChanges()">SAVE CHANGES</button>
+                <button class="btn-hide" id="toggleVisibilityBtn" onclick="toggleVisibility()">HIDE OVERLAY</button>
             </div>
         </div>
     </div>
@@ -805,24 +805,59 @@
             }, 2500);
         }
 
-        window.updateOverlay = function (isVisible) {
+        // Track current overlay visibility state
+        let currentIsVisible = false;
+
+        // Listen to ceramah_overlay and sync inputs + toggle button
+        const overlayRef = ref(db, 'ceramah_overlay');
+        onValue(overlayRef, (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                currentIsVisible = data.isVisible || false;
+                document.getElementById('inputTitle').value = data.title || '';
+                document.getElementById('inputName').value = data.name || '';
+            }
+            updateToggleBtn();
+        });
+
+        function updateToggleBtn() {
+            const btn = document.getElementById('toggleVisibilityBtn');
+            if (currentIsVisible) {
+                btn.innerText = 'HIDE OVERLAY';
+                btn.classList.remove('btn-show');
+                btn.classList.add('btn-hide');
+            } else {
+                btn.innerText = 'SHOW OVERLAY';
+                btn.classList.remove('btn-hide');
+                btn.classList.add('btn-show');
+            }
+        }
+
+        window.saveChanges = function () {
             const title = document.getElementById('inputTitle').value || "Penceramah Jemputan";
             const name = document.getElementById('inputName').value || "Sila Masukkan Nama";
 
             set(ref(db, 'ceramah_overlay'), {
                 title: title,
                 name: name,
-                isVisible: isVisible,
+                isVisible: currentIsVisible,
                 updatedAt: Date.now()
-            }).then(() => {
-                if (isVisible) {
-                    showToast("Shown on Stream!");
-                } else {
-                    showToast("Overlay Hidden!");
-                }
-            }).catch(err => {
-                showToast("Error updating!");
-            });
+            }).then(() => showToast("Changes Saved!"))
+              .catch(() => showToast("Error saving!"));
+        };
+
+        window.toggleVisibility = function () {
+            const title = document.getElementById('inputTitle').value || "Penceramah Jemputan";
+            const name = document.getElementById('inputName').value || "Sila Masukkan Nama";
+            const newState = !currentIsVisible;
+
+            set(ref(db, 'ceramah_overlay'), {
+                title: title,
+                name: name,
+                isVisible: newState,
+                updatedAt: Date.now()
+            }).then(() => showToast(newState ? "Shown on Stream!" : "Overlay Hidden!"))
+              .catch(() => showToast("Error updating!"));
         };
     </script>
 </body>
