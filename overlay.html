@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800&family=Playfair+Display:ital,wght@0,600;1,600&display=swap"
+        href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;700;800&family=Playfair+Display:ital,wght@0,600;1,600&display=swap"
         rel="stylesheet">
     <style>
         :root {
@@ -27,19 +27,19 @@
             padding: 0;
             overflow: hidden;
             background: transparent;
-            width: 1920px;
-            height: 1080px;
-            font-family: 'Montserrat', sans-serif;
+            width: 100vw;
+            height: 100vh;
+            font-family: 'League Spartan', sans-serif;
         }
 
         #lower-third-container {
             position: absolute;
-            bottom: 40px;
-            /* Floating above the bottom */
+            bottom: 3.7vh;
+            /* 40px / 1080px */
             left: 0;
             width: 100%;
-            height: 160px;
-            /* Taller */
+            height: 14.8vh;
+            /* 160px / 1080px */
             display: flex;
             opacity: 0;
             transform: translateY(150%);
@@ -56,22 +56,24 @@
             position: absolute;
             left: 0;
             bottom: 0;
-            height: 160px;
-            width: 270px;
-            /* Tighter against the logo */
+            height: 14.8vh;
+            width: 14vw;
+            /* 270px / 1920px */
             background: var(--blue-masjid);
-            /* Angle matches the original image. Top right leans in. */
             clip-path: polygon(0 0, 75% 0, 100% 100%, 0% 100%);
             display: flex;
             justify-content: flex-start;
             align-items: center;
-            padding-left: 40px;
+            padding-left: 2.1vw;
+            /* 40px / 1920px */
             z-index: 10;
         }
 
         .logo-section img.brand-logo {
-            width: 140px;
-            height: 130px;
+            width: 7.3vw;
+            /* 140px / 1920px */
+            height: 12vh;
+            /* 130px / 1080px */
             object-fit: contain;
         }
 
@@ -81,7 +83,7 @@
             left: 0;
             bottom: 0;
             width: 100%;
-            height: 160px;
+            height: 14.8vh;
             display: flex;
             flex-direction: column;
             z-index: 1;
@@ -90,37 +92,39 @@
         /* Top Bar */
         .bar-top {
             background: var(--bar-top);
-            height: 65px;
+            height: 6vh;
+            /* 65px / 1080px */
             display: flex;
             align-items: center;
             justify-content: space-between;
-            /* Increased padding to clear the slanted blue box */
-            padding-left: 320px;
-            padding-right: 220px;
-            /* Pushed left for larger QR */
+            padding-left: 16.6vw;
+            /* 320px / 1920px */
+            padding-right: 11.5vw;
+            /* 220px / 1920px */
         }
 
         .subtitle {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 38px;
+            font-size: 2vw;
+            /* ~38px / 1920px */
             font-weight: 800;
             color: var(--text-top);
             margin: 0;
-            letter-spacing: -0.5px;
+            letter-spacing: -0.05vw;
         }
 
         .qr-text {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 28px;
+            font-size: 1.45vw;
+            /* ~28px / 1920px */
             font-weight: 800;
             color: var(--text-top);
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 0.5vw;
         }
 
         .arrow {
-            font-size: 36px;
+            font-size: 1.8vw;
+            /* ~36px / 1920px */
             line-height: 1;
         }
 
@@ -128,17 +132,16 @@
         .bar-bottom {
             background: var(--bar-bottom);
             flex-grow: 1;
-            /* Automatically takes remaining 95px */
             display: flex;
             align-items: center;
-            /* Increased padding to clear the slanted blue box */
-            padding-left: 380px;
-            padding-right: 220px;
+            padding-left: 19.8vw;
+            /* 380px / 1920px */
+            padding-right: 11.5vw;
         }
 
         .title {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 64px;
+            font-size: 3.3vw;
+            /* ~64px / 1920px */
             font-weight: 800;
             color: var(--text-bottom);
             margin: 0;
@@ -149,20 +152,19 @@
         /* QR Section */
         .qr-section {
             position: absolute;
-            right: 40px;
+            right: 2.1vw;
+            /* 40px / 1920px */
             bottom: 0;
-            height: 160px;
-            /* Span full container height */
-            width: 160px;
+            height: 14.8vh;
+            width: 8.3vw;
+            /* 160px / 1920px */
             background: var(--bar-top);
-            /* White box to frame QR */
             box-sizing: border-box;
             z-index: 10;
             display: flex;
             justify-content: center;
             align-items: center;
-            /* Thinner padding to match image */
-            padding: 8px;
+            padding: 0.4vw;
         }
 
         .qr-placeholder {
@@ -210,7 +212,6 @@
         </div>
     </div>
 
-    <script src="./firebase-config.js"></script>
     <script src="./firebase-config.js"></script>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
