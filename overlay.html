@@ -193,7 +193,7 @@
         <div class="bars-container">
             <!-- Top White Bar -->
             <div class="bar bar-top">
-                <h2 class="subtitle">Kuliah Maghrib</h2>
+                <h2 class="subtitle" id="displayTitle">Kuliah Maghrib</h2>
                 <div class="qr-text">Tabung Masjid <span class="arrow">➔</span></div>
             </div>
             <!-- Bottom Black Bar -->
@@ -225,8 +225,12 @@
             if (data) {
                 const container = document.getElementById('lower-third-container');
                 const nameDisplay = document.getElementById('displayName');
+                const titleDisplay = document.getElementById('displayTitle');
 
                 nameDisplay.innerText = data.name;
+                if (data.title) {
+                    titleDisplay.innerText = data.title;
+                }
 
                 if (data.isVisible) {
                     container.classList.add('visible');
