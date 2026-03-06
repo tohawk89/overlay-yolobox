@@ -421,8 +421,14 @@
 
             <div class="section">
                 <h3 class="section-title">Schedule Sync (CSV)</h3>
-                <input type="file" id="csvFileInput" accept=".csv" class="file-input">
-                <div id="csvDataContainer" class="session-list" style="display: none;"></div>
+                <div id="upload-state">
+                    <input type="file" id="csvFileInput" accept=".csv" class="file-input">
+                </div>
+                <div id="list-state" style="display: none;">
+                    <button class="btn-outline" onclick="resetSchedule()"
+                        style="padding: 10px; margin-bottom: 12px; font-size: 14px;">Reset Schedule</button>
+                    <div id="csvDataContainer" class="session-list"></div>
+                </div>
             </div>
 
             <div class="section">
@@ -486,36 +492,62 @@
             const reader = new FileReader();
             reader.onload = function (event) {
                 const text = event.target.result;
-                parseAndRenderCSV(text);
+                parseAndUploadCSV(text);
             };
             reader.readAsText(file);
         });
 
-        function parseAndRenderCSV(csvText) {
+        function parseAndUploadCSV(csvText) {
             const lines = csvText.split('\n').filter(line => line.trim() !== '');
-            if (lines.length < 2) return; // Need headers + at least 1 row
+            if (lines.length < 2) return;
 
-            // Assume headers: Subject, Start Date, Start Time, End Date, End Time
             const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
-
-            // Match Subject dynamically or fallback
             const subjectIdx = headers.findIndex(h => h.includes('subject')) !== -1 ? headers.findIndex(h => h.includes('subject')) : 0;
             const dateIdx = headers.findIndex(h => h.includes('date')) !== -1 ? headers.findIndex(h => h.includes('date')) : 1;
             const timeIdx = headers.findIndex(h => h.includes('time')) !== -1 ? headers.findIndex(h => h.includes('time')) : 2;
 
-            const container = document.getElementById('csvDataContainer');
-            container.innerHTML = ''; // clear existing UI
-            container.style.display = 'flex';
+            const scheduleData = [];
 
             for (let i = 1; i < lines.length; i++) {
-                // simple CSV logic fallback
                 const cols = lines[i].split(',').map(c => c.trim().replace(/^"|"$/g, ''));
                 if (cols.length < 2) continue;
 
-                const subject = cols[subjectIdx] || 'Unknown';
-                const date = cols[dateIdx] || '';
-                const time = cols[timeIdx] || '';
+                scheduleData.push({
+                    subject: cols[subjectIdx] || 'Unknown',
+                    date: cols[dateIdx] || '',
+                    time: cols[timeIdx] || ''
+                });
+            }
 
+            set(ref(db, 'ceramah_schedule'), scheduleData)
+                .then(() => showToast("Schedule Uploaded!"))
+                .catch(() => showToast("Upload Failed!"));
+        }
+
+        window.resetSchedule = function () {
+            if (confirm("Are you sure you want to reset the schedule? This will remove all loaded speaker data.")) {
+                set(ref(db, 'ceramah_schedule'), null)
+                    .then(() => showToast("Schedule Reset!"))
+                    .catch(() => showToast("Reset Failed!"));
+            }
+        };
+
+        function renderSchedule(scheduleData) {
+            const container = document.getElementById('csvDataContainer');
+            const uploadState = document.getElementById('upload-state');
+            const listState = document.getElementById('list-state');
+
+            if (!scheduleData || scheduleData.length === 0) {
+                uploadState.style.display = 'block';
+                listState.style.display = 'none';
+                return;
+            }
+
+            uploadState.style.display = 'none';
+            listState.style.display = 'block';
+            container.innerHTML = '';
+
+            scheduleData.forEach(item => {
                 const sessionItem = document.createElement('div');
                 sessionItem.className = 'session-item';
 
@@ -524,11 +556,11 @@
 
                 const titleDiv = document.createElement('div');
                 titleDiv.className = 'session-title-item';
-                titleDiv.innerText = subject;
+                titleDiv.innerText = item.subject;
 
                 const timeDiv = document.createElement('div');
                 timeDiv.className = 'session-time';
-                timeDiv.innerText = `${date} ${time}`.trim();
+                timeDiv.innerText = `${item.date} ${item.time}`.trim();
 
                 infoDiv.appendChild(titleDiv);
                 infoDiv.appendChild(timeDiv);
@@ -537,14 +569,14 @@
                 useBtn.className = 'btn-outline use-btn';
                 useBtn.innerText = 'Use speaker';
                 useBtn.onclick = function () {
-                    document.getElementById('inputName').value = subject;
+                    document.getElementById('inputName').value = item.subject;
                     showToast("Speaker Selected!");
                 };
 
                 sessionItem.appendChild(infoDiv);
                 sessionItem.appendChild(useBtn);
                 container.appendChild(sessionItem);
-            }
+            });
         }
 
         const app = initializeApp(window.firebaseConfig);
@@ -563,6 +595,12 @@
                 statusText.innerText = "Disconnected";
                 statusEl.classList.remove('connected');
             }
+        });
+
+        // Schedule Persistence Monitoring
+        const scheduleRef = ref(db, 'ceramah_schedule');
+        onValue(scheduleRef, (snapshot) => {
+            renderSchedule(snapshot.val());
         });
 
         // Toast Feedback functionality
