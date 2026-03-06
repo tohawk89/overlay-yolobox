@@ -399,6 +399,80 @@
                 font-size: 14px;
             }
         }
+
+        /* Modal Styles */
+        .modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 3000;
+            padding: 20px;
+        }
+
+        .modal-backdrop.visible {
+            display: flex;
+        }
+
+        .modal-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            width: 100%;
+            max-width: 400px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            animation: modalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes modalPop {
+            from {
+                transform: scale(0.9);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-main);
+            margin: 0 0 12px 0;
+        }
+
+        .modal-desc {
+            font-size: 15px;
+            color: var(--text-muted);
+            line-height: 1.5;
+            margin-bottom: 24px;
+        }
+
+        .modal-btn-group {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn-cancel {
+            background: transparent;
+            border: 2px solid var(--border);
+            color: var(--text-muted);
+            flex: 1;
+        }
+
+        .btn-confirm-reset {
+            background: var(--danger);
+            flex: 1.5;
+        }
     </style>
 </head>
 
@@ -463,6 +537,19 @@
             <div class="btn-group">
                 <button class="btn-show" onclick="updateOverlay(true)">SHOW ON STREAM</button>
                 <button class="btn-hide" onclick="updateOverlay(false)">HIDE OVERLAY</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Reset Modal -->
+    <div id="reset-modal" class="modal-backdrop">
+        <div class="modal-card">
+            <h3 class="modal-title">Reset Schedule?</h3>
+            <p class="modal-desc">This will permanently clear all uploaded penceramah and kuliah data. This action
+                cannot be undone.</p>
+            <div class="modal-btn-group">
+                <button class="btn-cancel" onclick="closeResetModal()">Cancel</button>
+                <button class="btn-confirm-reset" onclick="confirmReset()">Reset Everything</button>
             </div>
         </div>
     </div>
@@ -570,11 +657,23 @@
         }
 
         window.resetSchedule = function () {
-            if (confirm("Are you sure you want to reset the schedule? This will remove all loaded speaker data.")) {
-                set(ref(db, 'ceramah_schedule'), null)
-                    .then(() => showToast("Schedule Reset!"))
-                    .catch(() => showToast("Reset Failed!"));
-            }
+            document.getElementById('reset-modal').classList.add('visible');
+        };
+
+        window.closeResetModal = function () {
+            document.getElementById('reset-modal').classList.remove('visible');
+        };
+
+        window.confirmReset = function () {
+            set(ref(db, 'ceramah_schedule'), null)
+                .then(() => {
+                    showToast("Schedule Reset!");
+                    closeResetModal();
+                })
+                .catch(() => {
+                    showToast("Reset Failed!");
+                    closeResetModal();
+                });
         };
 
         function renderSchedule(scheduleData) {
