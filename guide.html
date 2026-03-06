@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stream Control — How to Use</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #00a859;
+            --primary-dark: #008f4c;
+            --danger: #ef4444;
+            --bg-color: #f0fdf4;
+            --card-bg: #ffffff;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --border: #e5e7eb;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: var(--bg-color);
+            color: var(--text-main);
+        }
+
+        .top-bar {
+            background: var(--primary);
+            color: white;
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        .top-bar h1 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            text-decoration: none;
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+
+        .back-btn:hover { background: rgba(255,255,255,0.3); }
+
+        .container {
+            max-width: 680px;
+            margin: 0 auto;
+            padding: 32px 20px 60px;
+        }
+
+        .intro {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            border-left: 4px solid var(--primary);
+            box-shadow: 0 2px 8px rgba(0,168,89,0.08);
+        }
+
+        .intro p {
+            margin: 0;
+            font-size: 14px;
+            line-height: 1.7;
+            color: var(--text-muted);
+        }
+
+        .intro p strong { color: var(--text-main); }
+
+        .section {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .section-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: rgba(0,168,89,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .section-icon svg { fill: var(--primary); width: 20px; height: 20px; }
+
+        .section-header h2 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .step-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .step {
+            display: flex;
+            gap: 14px;
+            align-items: flex-start;
+        }
+
+        .step-num {
+            background: var(--primary);
+            color: white;
+            font-size: 12px;
+            font-weight: 700;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .step p {
+            margin: 0;
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--text-muted);
+        }
+
+        .step p strong { color: var(--text-main); }
+
+        .scenario-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .scenario {
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 14px 16px;
+        }
+
+        .scenario-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--primary-dark);
+            margin-bottom: 6px;
+        }
+
+        .scenario-steps {
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.7;
+            margin: 0;
+        }
+
+        .scenario-steps code {
+            background: rgba(0,168,89,0.1);
+            color: var(--primary-dark);
+            padding: 1px 6px;
+            border-radius: 4px;
+            font-family: inherit;
+            font-weight: 700;
+            font-size: 12px;
+        }
+
+        .badge-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 4px;
+        }
+
+        .badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .badge-green { background: #dcfce7; color: #166534; }
+        .badge-red { background: #fee2e2; color: #991b1b; }
+        .badge-blue { background: #dbeafe; color: #1e40af; }
+        .badge-yellow { background: #fef9c3; color: #854d0e; }
+
+        .csv-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            margin-top: 8px;
+        }
+
+        .csv-table th {
+            background: #f8fafc;
+            padding: 8px 12px;
+            text-align: left;
+            font-weight: 700;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .csv-table td {
+            padding: 8px 12px;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-main);
+        }
+
+        .csv-table tr:last-child td { border-bottom: none; }
+
+        .note {
+            display: flex;
+            gap: 10px;
+            background: #fef9c3;
+            border-radius: 10px;
+            padding: 12px 14px;
+            margin-top: 14px;
+            font-size: 13px;
+            color: #854d0e;
+            line-height: 1.6;
+        }
+
+        .note svg { fill: #ca8a04; flex-shrink: 0; margin-top: 2px; }
+
+        .flow-diagram {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-top: 8px;
+        }
+
+        .flow-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+        }
+
+        .flow-box {
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 6px 12px;
+            font-weight: 600;
+            color: var(--text-main);
+            white-space: nowrap;
+        }
+
+        .flow-box.green { background: #dcfce7; border-color: #86efac; color: #166534; }
+        .flow-box.red { background: #fee2e2; border-color: #fca5a5; color: #991b1b; }
+        .flow-arrow { color: var(--text-muted); font-size: 16px; }
+    </style>
+</head>
+
+<body>
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <h1>How to Use — Stream Control</h1>
+        <a href="control.html" class="back-btn">
+            <svg style="width:14px;height:14px;fill:white;" viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+            Back
+        </a>
+    </div>
+
+    <div class="container">
+
+        <!-- Intro -->
+        <div class="intro">
+            <p>This system controls the <strong>lower-third overlay</strong> shown on your live stream (YoloBox/OBS). It runs fully automatically based on a schedule. This guide explains each feature and common scenarios.</p>
+        </div>
+
+        <!-- How It Works -->
+        <div class="section">
+            <div class="section-header">
+                <div class="section-icon">
+                    <svg viewBox="0 0 24 24"><path d="M13 2.05v2.02c3.95.49 7 3.85 7 7.93 0 3.21-1.81 6-4.72 7.72L13 17v5h5l-1.22-1.22C19.91 19.07 22 15.76 22 12c0-5.18-3.95-9.45-9-9.95zM11 2.05C5.95 2.55 2 6.82 2 12c0 3.76 2.09 7.07 5.22 8.78L6 22h5V2.05z"/></svg>
+                </div>
+                <h2>How It Works</h2>
+            </div>
+            <div class="flow-diagram">
+                <div class="flow-row">
+                    <div class="flow-box green">Schedule CSV</div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-box">Firebase</div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-box green">Overlay (YoloBox)</div>
+                </div>
+                <div class="flow-row">
+                    <div class="flow-box red">Control Panel</div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-box">Firebase</div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-box green">Overlay (YoloBox)</div>
+                </div>
+            </div>
+            <div style="margin-top:16px;" class="step-list">
+                <div class="step">
+                    <div class="step-num">1</div>
+                    <p>The overlay page runs inside YoloBox/OBS as a browser source. It listens to Firebase in real-time.</p>
+                </div>
+                <div class="step">
+                    <div class="step-num">2</div>
+                    <p>When a scheduled session becomes active by time, the overlay <strong>automatically shows</strong> the speaker name and updates Firebase — which syncs to the control panel instantly.</p>
+                </div>
+                <div class="step">
+                    <div class="step-num">3</div>
+                    <p>When no session is active, the overlay <strong>respects the control panel</strong> — you can manually show a surprise speaker or keep it hidden.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Schedule Sync -->
+        <div class="section">
+            <div class="section-header">
+                <div class="section-icon">
+                    <svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/></svg>
+                </div>
+                <h2>Schedule Sync (CSV)</h2>
+            </div>
+            <p style="font-size:14px;color:var(--text-muted);margin:0 0 14px;">Upload a CSV file with all sessions for the day. The system auto-sorts by time regardless of row order.</p>
+            <p style="font-size:13px;font-weight:700;color:var(--text-main);margin:0 0 8px;">Required CSV columns:</p>
+            <table class="csv-table">
+                <thead>
+                    <tr>
+                        <th>Column</th>
+                        <th>Example</th>
+                        <th>Notes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td><strong>Subject</strong></td><td>Kuliah Maghrib</td><td>Program title shown on top bar</td></tr>
+                    <tr><td><strong>Description</strong></td><td>Ustaz Ahmad Fauzi</td><td>Speaker name shown on bottom bar</td></tr>
+                    <tr><td><strong>Start Date</strong></td><td>07/03/2026</td><td>DD/MM/YYYY format</td></tr>
+                    <tr><td><strong>Start Time</strong></td><td>20:00:00</td><td>HH:MM:SS (24-hour)</td></tr>
+                    <tr><td><strong>End Date</strong></td><td>07/03/2026</td><td>DD/MM/YYYY format</td></tr>
+                    <tr><td><strong>End-Time</strong></td><td>21:30:00</td><td>HH:MM:SS (24-hour)</td></tr>
+                </tbody>
+            </table>
+            <div class="note">
+                <svg style="width:16px;height:16px;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+                Rows can be in any order — the system automatically sorts them chronologically before uploading. To clear the schedule, press <strong>Reset Schedule</strong>.
+            </div>
+        </div>
+
+        <!-- Current Event -->
+        <div class="section">
+            <div class="section-header">
+                <div class="section-icon">
+                    <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                </div>
+                <h2>Current Event</h2>
+            </div>
+            <p style="font-size:14px;color:var(--text-muted);margin:0 0 14px;">Shows what is currently live on the overlay. Auto-updates when a new session starts. You can edit it manually at any time.</p>
+            <div class="badge-row" style="margin-bottom:16px;">
+                <span class="badge badge-green">SAVE CHANGES</span>
+                <span class="badge badge-red">HIDE OVERLAY</span>
+                <span class="badge badge-green">SHOW OVERLAY</span>
+            </div>
+            <div class="step-list">
+                <div class="step">
+                    <div class="step-num">→</div>
+                    <p><strong>Save Changes</strong> — updates the name/title on stream <em>without</em> changing visibility. Use this to fix typos while the overlay is live.</p>
+                </div>
+                <div class="step">
+                    <div class="step-num">→</div>
+                    <p><strong>Hide / Show Overlay</strong> — toggles visibility. The button label and colour changes to reflect the current live state.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Schedule List Buttons -->
+        <div class="section">
+            <div class="section-header">
+                <div class="section-icon">
+                    <svg viewBox="0 0 24 24"><path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z"/></svg>
+                </div>
+                <h2>Jump to This Speaker</h2>
+            </div>
+            <p style="font-size:14px;color:var(--text-muted);margin:0 0 14px;">Each session card in the schedule list has a <strong>Jump to this speaker</strong> button.</p>
+            <div class="step-list">
+                <div class="step">
+                    <div class="step-num">→</div>
+                    <p>Instantly shows the selected speaker on stream with <code>isVisible: true</code> — no extra steps needed.</p>
+                </div>
+                <div class="step">
+                    <div class="step-num">→</div>
+                    <p>Useful when a speaker starts early, or you want to preview the next session ahead of schedule.</p>
+                </div>
+                <div class="step">
+                    <div class="step-num">→</div>
+                    <p>The schedule clock keeps running — when the <em>next</em> scheduled session starts, it will automatically overwrite this back to the correct speaker.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Common Scenarios -->
+        <div class="section">
+            <div class="section-header">
+                <div class="section-icon">
+                    <svg viewBox="0 0 24 24"><path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7z"/></svg>
+                </div>
+                <h2>Common Scenarios</h2>
+            </div>
+            <div class="scenario-list">
+                <div class="scenario">
+                    <div class="scenario-title">Normal scheduled session</div>
+                    <p class="scenario-steps">No action needed. The overlay automatically shows when the session starts and hides when it ends.</p>
+                </div>
+                <div class="scenario">
+                    <div class="scenario-title">Hide overlay mid-session (e.g. break)</div>
+                    <p class="scenario-steps">Click <code>HIDE OVERLAY</code>. Click <code>SHOW OVERLAY</code> to bring it back. The next scheduled session will auto-reset visibility when it starts.</p>
+                </div>
+                <div class="scenario">
+                    <div class="scenario-title">Fix typo while live</div>
+                    <p class="scenario-steps">Edit the name or title in the Current Event section → click <code>SAVE CHANGES</code>. Overlay updates instantly without hiding.</p>
+                </div>
+                <div class="scenario">
+                    <div class="scenario-title">Surprise / unscheduled speaker</div>
+                    <p class="scenario-steps">Type name and title in Current Event section → click <code>SHOW OVERLAY</code>. The overlay will stay on until you hide it or the next scheduled session starts.</p>
+                </div>
+                <div class="scenario">
+                    <div class="scenario-title">Speaker starts early</div>
+                    <p class="scenario-steps">Find the session in the schedule list → click <code>Jump to this speaker</code>. Overlay shows immediately.</p>
+                </div>
+                <div class="scenario">
+                    <div class="scenario-title">New day / new schedule</div>
+                    <p class="scenario-steps">Click <code>Reset Schedule</code> to clear old data, then upload a new CSV file for the day.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Timing -->
+        <div class="section">
+            <div class="section-header">
+                <div class="section-icon">
+                    <svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/></svg>
+                </div>
+                <h2>Timing Reference</h2>
+            </div>
+            <table class="csv-table">
+                <thead>
+                    <tr><th>What</th><th>How fast</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Control panel inputs sync</td><td><strong>Instant</strong> (Firebase WebSocket)</td></tr>
+                    <tr><td>Hide / Show Overlay button</td><td><strong>Instant</strong></td></tr>
+                    <tr><td>Jump to this speaker</td><td><strong>Instant</strong></td></tr>
+                    <tr><td>Auto session start / end on overlay</td><td><strong>Within 10 seconds</strong></td></tr>
+                    <tr><td>Past events hidden from schedule list</td><td><strong>Within 10 seconds</strong></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</body>
+
+</html>

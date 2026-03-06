@@ -281,13 +281,13 @@
                     });
                     // Will re-trigger via onValue, so UI update handled there
                 } else {
-                    // Same session — respect current isVisible from control panel
-                    updateUI(activeSession.description, activeSession.subject, manualOverlayState.isVisible);
+                    // Same session — ceramah_overlay is single source of truth (supports jump/override)
+                    updateUI(manualOverlayState.name, manualOverlayState.title, manualOverlayState.isVisible);
                 }
             } else {
-                // No active session — reset key and always hide
+                // No active session — Option B: respect isVisible (supports surprise/manual speakers)
                 lastActiveSessionKey = null;
-                updateUI('', '', false);
+                updateUI(manualOverlayState.name, manualOverlayState.title, manualOverlayState.isVisible);
             }
         }
 
