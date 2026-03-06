@@ -92,8 +92,7 @@
         /* Top Bar */
         .bar-top {
             background: var(--bar-top);
-            height: 6vh;
-            /* 65px / 1080px */
+            flex: 1;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -123,17 +122,18 @@
             gap: 0.5vw;
         }
 
-        .arrow-svg {
+        .arrow-img {
             width: 1.5vw;
             height: 1.5vw;
             display: inline-block;
             vertical-align: middle;
+            object-fit: contain;
         }
 
         /* Bottom Bar */
         .bar-bottom {
             background: var(--bar-bottom);
-            flex-grow: 1;
+            flex: 1;
             display: flex;
             align-items: center;
             padding-left: 15vw;
@@ -199,9 +199,7 @@
             <div class="bar bar-top">
                 <h2 class="subtitle" id="displayTitle">Kuliah Maghrib</h2>
                 <div class="qr-text">Tabung Masjid
-                    <svg class="arrow-svg" viewBox="0 0 100 100">
-                        <path d="M10 45h50V25l30 25-30 25V55H10z" fill="currentColor" />
-                    </svg>
+                    <img src="img/arrow.jpg" alt="arrow" class="arrow-img" />
                 </div>
             </div>
             <!-- Bottom Black Bar -->
