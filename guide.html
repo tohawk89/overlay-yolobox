@@ -300,7 +300,7 @@
 
         <!-- Intro -->
         <div class="intro">
-            <p>This system controls the <strong>lower-third overlay</strong> shown on your live stream (YoloBox/OBS). It runs fully automatically based on a schedule. This guide explains each feature and common scenarios.</p>
+            <p>This page controls the <strong>nama penceramah banner</strong> that appears at the bottom of your live stream on YoloBox or OBS. Once your schedule is uploaded, everything runs on its own — this guide will help you handle any situation that comes up during a live broadcast.</p>
         </div>
 
         <!-- How It Works -->
@@ -313,32 +313,28 @@
             </div>
             <div class="flow-diagram">
                 <div class="flow-row">
-                    <div class="flow-box green">Schedule CSV</div>
+                    <div class="flow-box green">Schedule (CSV)</div>
                     <span class="flow-arrow">→</span>
-                    <div class="flow-box">Firebase</div>
-                    <span class="flow-arrow">→</span>
-                    <div class="flow-box green">Overlay (YoloBox)</div>
+                    <div class="flow-box green">Banner on Stream</div>
                 </div>
                 <div class="flow-row">
-                    <div class="flow-box red">Control Panel</div>
+                    <div class="flow-box red">Control Panel (this page)</div>
                     <span class="flow-arrow">→</span>
-                    <div class="flow-box">Firebase</div>
-                    <span class="flow-arrow">→</span>
-                    <div class="flow-box green">Overlay (YoloBox)</div>
+                    <div class="flow-box green">Banner on Stream</div>
                 </div>
             </div>
             <div style="margin-top:16px;" class="step-list">
                 <div class="step">
                     <div class="step-num">1</div>
-                    <p>The overlay page runs inside YoloBox/OBS as a browser source. It listens to Firebase in real-time.</p>
+                    <p>Your YoloBox or OBS displays the <strong>overlay page</strong> as a browser source. It updates automatically — you do not need to touch it during the live stream.</p>
                 </div>
                 <div class="step">
                     <div class="step-num">2</div>
-                    <p>When a scheduled session becomes active by time, the overlay <strong>automatically shows</strong> the speaker name and updates Firebase — which syncs to the control panel instantly.</p>
+                    <p>When a session's start time arrives, the banner <strong>appears on its own</strong> showing the program name and speaker. When the session ends, it <strong>disappears on its own</strong>.</p>
                 </div>
                 <div class="step">
                     <div class="step-num">3</div>
-                    <p>When no session is active, the overlay <strong>respects the control panel</strong> — you can manually show a surprise speaker or keep it hidden.</p>
+                    <p>Use this control panel only when you need to step in — such as fixing a name, hiding the banner, or showing a speaker that is not in the schedule.</p>
                 </div>
             </div>
         </div>
@@ -349,30 +345,44 @@
                 <div class="section-icon">
                     <svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/></svg>
                 </div>
-                <h2>Schedule Sync (CSV)</h2>
+                <h2>Upload Schedule (CSV)</h2>
             </div>
-            <p style="font-size:14px;color:var(--text-muted);margin:0 0 14px;">Upload a CSV file with all sessions for the day. The system auto-sorts by time regardless of row order.</p>
-            <p style="font-size:13px;font-weight:700;color:var(--text-main);margin:0 0 8px;">Required CSV columns:</p>
+            <p style="font-size:14px;color:var(--text-muted);margin:0 0 14px;">Before the event begins, upload a schedule file so the banner knows when to show each speaker automatically.</p>
+            <div class="step-list">
+                <div class="step">
+                    <div class="step-num">1</div>
+                    <p>Prepare a <strong>.csv spreadsheet</strong> (Microsoft Excel or Google Sheets → Save As CSV) with the columns below.</p>
+                </div>
+                <div class="step">
+                    <div class="step-num">2</div>
+                    <p>Tap the file upload area and select your CSV. The schedule will load immediately.</p>
+                </div>
+                <div class="step">
+                    <div class="step-num">3</div>
+                    <p>Rows do not need to be in time order — the system sorts them automatically.</p>
+                </div>
+            </div>
+            <p style="font-size:13px;font-weight:700;color:var(--text-main);margin:16px 0 8px;">Spreadsheet columns required:</p>
             <table class="csv-table">
                 <thead>
                     <tr>
-                        <th>Column</th>
+                        <th>Column name</th>
+                        <th>What to fill in</th>
                         <th>Example</th>
-                        <th>Notes</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr><td><strong>Subject</strong></td><td>Kuliah Maghrib</td><td>Program title shown on top bar</td></tr>
-                    <tr><td><strong>Description</strong></td><td>Ustaz Ahmad Fauzi</td><td>Speaker name shown on bottom bar</td></tr>
-                    <tr><td><strong>Start Date</strong></td><td>07/03/2026</td><td>DD/MM/YYYY format</td></tr>
-                    <tr><td><strong>Start Time</strong></td><td>20:00:00</td><td>HH:MM:SS (24-hour)</td></tr>
-                    <tr><td><strong>End Date</strong></td><td>07/03/2026</td><td>DD/MM/YYYY format</td></tr>
-                    <tr><td><strong>End-Time</strong></td><td>21:30:00</td><td>HH:MM:SS (24-hour)</td></tr>
+                    <tr><td><strong>Subject</strong></td><td>Program / kuliah name (shown on white bar)</td><td>Kuliah Maghrib</td></tr>
+                    <tr><td><strong>Description</strong></td><td>Speaker name (shown on black bar)</td><td>Ustaz Ahmad Fauzi</td></tr>
+                    <tr><td><strong>Start Date</strong></td><td>Date the session starts</td><td>07/03/2026</td></tr>
+                    <tr><td><strong>Start Time</strong></td><td>Time the session starts (24-hour)</td><td>20:00:00</td></tr>
+                    <tr><td><strong>End Date</strong></td><td>Date the session ends</td><td>07/03/2026</td></tr>
+                    <tr><td><strong>End-Time</strong></td><td>Time the session ends (24-hour)</td><td>21:30:00</td></tr>
                 </tbody>
             </table>
             <div class="note">
                 <svg style="width:16px;height:16px;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
-                Rows can be in any order — the system automatically sorts them chronologically before uploading. To clear the schedule, press <strong>Reset Schedule</strong>.
+                After uploading, the session list will appear. Past sessions are removed from the list automatically. To start fresh for a new day, tap <strong>Reset Schedule</strong> before uploading a new file.
             </div>
         </div>
 
@@ -382,22 +392,23 @@
                 <div class="section-icon">
                     <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
                 </div>
-                <h2>Current Event</h2>
+                <h2>Current Event Section</h2>
             </div>
-            <p style="font-size:14px;color:var(--text-muted);margin:0 0 14px;">Shows what is currently live on the overlay. Auto-updates when a new session starts. You can edit it manually at any time.</p>
-            <div class="badge-row" style="margin-bottom:16px;">
-                <span class="badge badge-green">SAVE CHANGES</span>
-                <span class="badge badge-red">HIDE OVERLAY</span>
-                <span class="badge badge-green">SHOW OVERLAY</span>
-            </div>
-            <div class="step-list">
-                <div class="step">
-                    <div class="step-num">→</div>
-                    <p><strong>Save Changes</strong> — updates the name/title on stream <em>without</em> changing visibility. Use this to fix typos while the overlay is live.</p>
+            <p style="font-size:14px;color:var(--text-muted);margin:0 0 14px;">This section always shows what is <strong>currently displayed on the stream banner</strong>. It updates automatically as sessions change. You can also edit it freely at any time.</p>
+            <div class="scenario-list">
+                <div class="scenario">
+                    <div class="scenario-title">
+                        <span class="badge badge-green" style="font-size:11px;">SAVE CHANGES</span>
+                    </div>
+                    <p class="scenario-steps">Edit the program name or speaker name, then tap this to update what is shown on the stream — <strong>without hiding the banner</strong>. Great for fixing a spelling mistake while you are live.</p>
                 </div>
-                <div class="step">
-                    <div class="step-num">→</div>
-                    <p><strong>Hide / Show Overlay</strong> — toggles visibility. The button label and colour changes to reflect the current live state.</p>
+                <div class="scenario">
+                    <div class="scenario-title">
+                        <span class="badge badge-red" style="font-size:11px;">HIDE OVERLAY</span>
+                        &nbsp;/&nbsp;
+                        <span class="badge badge-green" style="font-size:11px;">SHOW OVERLAY</span>
+                    </div>
+                    <p class="scenario-steps">One button that toggles the banner on or off. The label and colour change to show you the current state. If the banner is now <strong>visible</strong>, the button shows <em>Hide Overlay</em> (red). If it is <strong>hidden</strong>, the button shows <em>Show Overlay</em> (green).</p>
                 </div>
             </div>
         </div>
@@ -410,19 +421,15 @@
                 </div>
                 <h2>Jump to This Speaker</h2>
             </div>
-            <p style="font-size:14px;color:var(--text-muted);margin:0 0 14px;">Each session card in the schedule list has a <strong>Jump to this speaker</strong> button.</p>
+            <p style="font-size:14px;color:var(--text-muted);margin:0 0 14px;">Every session card in the list has a <strong>Jump to this speaker</strong> button.</p>
             <div class="step-list">
                 <div class="step">
                     <div class="step-num">→</div>
-                    <p>Instantly shows the selected speaker on stream with <code>isVisible: true</code> — no extra steps needed.</p>
+                    <p>Tap it to <strong>immediately show that speaker on the stream banner</strong> — useful when a speaker arrives early or you need to switch manually.</p>
                 </div>
                 <div class="step">
                     <div class="step-num">→</div>
-                    <p>Useful when a speaker starts early, or you want to preview the next session ahead of schedule.</p>
-                </div>
-                <div class="step">
-                    <div class="step-num">→</div>
-                    <p>The schedule clock keeps running — when the <em>next</em> scheduled session starts, it will automatically overwrite this back to the correct speaker.</p>
+                    <p>The schedule keeps running in the background. When the next session's time arrives, it will <strong>automatically switch back</strong> to the correct speaker.</p>
                 </div>
             </div>
         </div>
@@ -433,32 +440,32 @@
                 <div class="section-icon">
                     <svg viewBox="0 0 24 24"><path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7z"/></svg>
                 </div>
-                <h2>Common Scenarios</h2>
+                <h2>What to Do When...</h2>
             </div>
             <div class="scenario-list">
                 <div class="scenario">
-                    <div class="scenario-title">Normal scheduled session</div>
-                    <p class="scenario-steps">No action needed. The overlay automatically shows when the session starts and hides when it ends.</p>
+                    <div class="scenario-title">✅ Normal session — nothing to do</div>
+                    <p class="scenario-steps">The banner appears and disappears automatically based on the schedule. No action needed.</p>
                 </div>
                 <div class="scenario">
-                    <div class="scenario-title">Hide overlay mid-session (e.g. break)</div>
-                    <p class="scenario-steps">Click <code>HIDE OVERLAY</code>. Click <code>SHOW OVERLAY</code> to bring it back. The next scheduled session will auto-reset visibility when it starts.</p>
+                    <div class="scenario-title">🙈 You want to hide the banner temporarily</div>
+                    <p class="scenario-steps">Tap <code>HIDE OVERLAY</code>. Tap <code>SHOW OVERLAY</code> when you want it back. The next scheduled session will automatically show the banner again when its time comes.</p>
                 </div>
                 <div class="scenario">
-                    <div class="scenario-title">Fix typo while live</div>
-                    <p class="scenario-steps">Edit the name or title in the Current Event section → click <code>SAVE CHANGES</code>. Overlay updates instantly without hiding.</p>
+                    <div class="scenario-title">✏️ Speaker name has a typo</div>
+                    <p class="scenario-steps">Edit the name in the Current Event section → tap <code>SAVE CHANGES</code>. The banner updates on screen immediately without flashing or hiding.</p>
                 </div>
                 <div class="scenario">
-                    <div class="scenario-title">Surprise / unscheduled speaker</div>
-                    <p class="scenario-steps">Type name and title in Current Event section → click <code>SHOW OVERLAY</code>. The overlay will stay on until you hide it or the next scheduled session starts.</p>
+                    <div class="scenario-title">⚡ Speaker starts earlier than scheduled</div>
+                    <p class="scenario-steps">Find the session card in the list → tap <code>Jump to this speaker</code>. The banner switches immediately.</p>
                 </div>
                 <div class="scenario">
-                    <div class="scenario-title">Speaker starts early</div>
-                    <p class="scenario-steps">Find the session in the schedule list → click <code>Jump to this speaker</code>. Overlay shows immediately.</p>
+                    <div class="scenario-title">🎤 Surprise or unscheduled speaker</div>
+                    <p class="scenario-steps">Type the program name and speaker name in the Current Event section → tap <code>SHOW OVERLAY</code>. The banner will stay on until you hide it, or until the next scheduled session takes over automatically.</p>
                 </div>
                 <div class="scenario">
-                    <div class="scenario-title">New day / new schedule</div>
-                    <p class="scenario-steps">Click <code>Reset Schedule</code> to clear old data, then upload a new CSV file for the day.</p>
+                    <div class="scenario-title">📅 New day or new event</div>
+                    <p class="scenario-steps">Tap <code>Reset Schedule</code> to clear the old schedule, then upload a new CSV file for the day.</p>
                 </div>
             </div>
         </div>
@@ -469,20 +476,24 @@
                 <div class="section-icon">
                     <svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/></svg>
                 </div>
-                <h2>Timing Reference</h2>
+                <h2>How Fast Does It Update?</h2>
             </div>
             <table class="csv-table">
                 <thead>
-                    <tr><th>What</th><th>How fast</th></tr>
+                    <tr><th>Action</th><th>How fast</th></tr>
                 </thead>
                 <tbody>
-                    <tr><td>Control panel inputs sync</td><td><strong>Instant</strong> (Firebase WebSocket)</td></tr>
-                    <tr><td>Hide / Show Overlay button</td><td><strong>Instant</strong></td></tr>
-                    <tr><td>Jump to this speaker</td><td><strong>Instant</strong></td></tr>
-                    <tr><td>Auto session start / end on overlay</td><td><strong>Within 10 seconds</strong></td></tr>
-                    <tr><td>Past events hidden from schedule list</td><td><strong>Within 10 seconds</strong></td></tr>
+                    <tr><td>Pressing Hide / Show Overlay</td><td><strong>Instant</strong></td></tr>
+                    <tr><td>Pressing Save Changes</td><td><strong>Instant</strong></td></tr>
+                    <tr><td>Pressing Jump to this speaker</td><td><strong>Instant</strong></td></tr>
+                    <tr><td>Automatic session start or end</td><td><strong>Within 10 seconds</strong></td></tr>
+                    <tr><td>Finished sessions disappear from list</td><td><strong>Within 10 seconds</strong></td></tr>
                 </tbody>
             </table>
+            <div class="note">
+                <svg style="width:16px;height:16px;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+                This control panel works on any device with a browser — phone, tablet, or laptop. Multiple people can have it open at the same time and they will all see the same live state.
+            </div>
         </div>
 
     </div>
