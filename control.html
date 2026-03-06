@@ -377,6 +377,28 @@
             background: #c1c1c1;
             border-radius: 10px;
         }
+
+        /* Responsive Mobile Styles for Schedule List */
+        @media (max-width: 480px) {
+            .session-item {
+                flex-direction: column;
+                align-items: stretch;
+                padding: 16px;
+                gap: 16px;
+            }
+
+            .session-title-item {
+                white-space: normal;
+                /* Allow long names to wrap */
+                word-break: break-word;
+            }
+
+            .use-btn {
+                width: 100%;
+                padding: 12px;
+                font-size: 14px;
+            }
+        }
     </style>
 </head>
 
