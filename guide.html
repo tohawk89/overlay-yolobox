@@ -283,6 +283,100 @@
         .flow-box.green { background: #dcfce7; border-color: #86efac; color: #166534; }
         .flow-box.red { background: #fee2e2; border-color: #fca5a5; color: #991b1b; }
         .flow-arrow { color: var(--text-muted); font-size: 16px; }
+
+        /* ---- Mobile Responsive ---- */
+        @media (max-width: 600px) {
+            .top-bar {
+                padding: 12px 16px;
+                gap: 10px;
+            }
+
+            .top-bar h1 {
+                font-size: 15px;
+                flex: 1;
+            }
+
+            .back-btn {
+                padding: 7px 12px;
+                font-size: 12px;
+                white-space: nowrap;
+            }
+
+            .container {
+                padding: 20px 14px 48px;
+            }
+
+            .intro, .section {
+                padding: 18px 16px;
+                border-radius: 12px;
+            }
+
+            .section-header h2 {
+                font-size: 15px;
+            }
+
+            .intro p, .step p {
+                font-size: 13px;
+            }
+
+            .flow-diagram {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .flow-row {
+                flex-wrap: wrap;
+                gap: 6px;
+            }
+
+            .flow-box {
+                white-space: normal;
+                font-size: 12px;
+                padding: 5px 10px;
+            }
+
+            /* Make tables scroll horizontally on small screens */
+            .csv-table-wrapper {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                margin-top: 8px;
+                border-radius: 8px;
+                border: 1px solid var(--border);
+            }
+
+            .csv-table {
+                min-width: 420px;
+                margin-top: 0;
+                border: none;
+            }
+
+            .csv-table th, .csv-table td {
+                padding: 8px 10px;
+                font-size: 12px;
+            }
+
+            .scenario {
+                padding: 12px 14px;
+            }
+
+            .scenario-title {
+                font-size: 12px;
+            }
+
+            .scenario-steps {
+                font-size: 12px;
+            }
+
+            .note {
+                font-size: 12px;
+                padding: 10px 12px;
+            }
+
+            .badge {
+                font-size: 11px;
+                padding: 4px 10px;
+            }
+        }
     </style>
 </head>
 
@@ -363,6 +457,7 @@
                 </div>
             </div>
             <p style="font-size:13px;font-weight:700;color:var(--text-main);margin:16px 0 8px;">Spreadsheet columns required:</p>
+            <div class="csv-table-wrapper">
             <table class="csv-table">
                 <thead>
                     <tr>
@@ -380,6 +475,7 @@
                     <tr><td><strong>End-Time</strong></td><td>Time the session ends (24-hour)</td><td>21:30:00</td></tr>
                 </tbody>
             </table>
+            </div>
             <div class="note">
                 <svg style="width:16px;height:16px;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
                 After uploading, the session list will appear. Past sessions are removed from the list automatically. To start fresh for a new day, tap <strong>Reset Schedule</strong> before uploading a new file.
@@ -478,6 +574,7 @@
                 </div>
                 <h2>How Fast Does It Update?</h2>
             </div>
+            <div class="csv-table-wrapper">
             <table class="csv-table">
                 <thead>
                     <tr><th>Action</th><th>How fast</th></tr>
@@ -490,6 +587,7 @@
                     <tr><td>Finished sessions disappear from list</td><td><strong>Within 10 seconds</strong></td></tr>
                 </tbody>
             </table>
+            </div>
             <div class="note">
                 <svg style="width:16px;height:16px;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
                 This control panel works on any device with a browser — phone, tablet, or laptop. Multiple people can have it open at the same time and they will all see the same live state.
