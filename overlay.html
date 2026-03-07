@@ -274,6 +274,7 @@
                         title: activeSession.subject,
                         name: activeSession.description,
                         isVisible: true,
+                        lastSessionKey: sessionKey,
                         updatedAt: Date.now()
                     });
                     // Will re-trigger via onValue, so UI update handled there
@@ -283,13 +284,14 @@
                 }
             } else {
                 // No active session
-                if (lastActiveSessionKey !== null) {
-                    // Transition: session just ended — write isVisible: false to Firebase
+                if (manualOverlayState.lastSessionKey) {
+                    // Transition: session just ended (detected via Firebase lastSessionKey) — force hide
                     lastActiveSessionKey = null;
                     set(ref(db, 'ceramah_overlay'), {
                         title: manualOverlayState.title,
                         name: manualOverlayState.name,
                         isVisible: false,
+                        lastSessionKey: null,
                         updatedAt: Date.now()
                     });
                     // Will re-trigger via onValue, UI update handled there
