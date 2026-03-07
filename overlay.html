@@ -282,9 +282,21 @@
                     updateUI(manualOverlayState.name, manualOverlayState.title, manualOverlayState.isVisible);
                 }
             } else {
-                // No active session — Option B: respect isVisible (supports surprise/manual speakers)
-                lastActiveSessionKey = null;
-                updateUI(manualOverlayState.name, manualOverlayState.title, manualOverlayState.isVisible);
+                // No active session
+                if (lastActiveSessionKey !== null) {
+                    // Transition: session just ended — write isVisible: false to Firebase
+                    lastActiveSessionKey = null;
+                    set(ref(db, 'ceramah_overlay'), {
+                        title: manualOverlayState.title,
+                        name: manualOverlayState.name,
+                        isVisible: false,
+                        updatedAt: Date.now()
+                    });
+                    // Will re-trigger via onValue, UI update handled there
+                } else {
+                    // Gap with no prior session — Option B: respect isVisible (supports surprise/manual speakers)
+                    updateUI(manualOverlayState.name, manualOverlayState.title, manualOverlayState.isVisible);
+                }
             }
         }
 
