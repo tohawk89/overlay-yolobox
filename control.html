@@ -684,7 +684,16 @@
         };
 
         window.confirmReset = function () {
-            set(ref(db, 'ceramah_schedule'), null)
+            Promise.all([
+                set(ref(db, 'ceramah_schedule'), null),
+                set(ref(db, 'ceramah_overlay'), {
+                    isVisible: false,
+                    name: '',
+                    title: '',
+                    lastSessionKey: null,
+                    updatedAt: Date.now()
+                })
+            ])
                 .then(() => {
                     showToast("Schedule Reset!");
                     closeResetModal();
