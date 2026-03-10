@@ -269,6 +269,8 @@
                 });
             }
 
+            const CLEAR_DELAY_MS = 2 * 60 * 60 * 1000; // 2 hours after session ends
+
             if (activeSession) {
                 const sessionKey = `${activeSession.startDate}_${activeSession.startTime}`;
 
@@ -280,6 +282,7 @@
                         name: activeSession.description,
                         isVisible: true,
                         lastSessionKey: sessionKey,
+                        sessionEndedAt: null, // Clear any previous grace period
                         updatedAt: Date.now()
                     });
                     // Will re-trigger via onValue, so UI update handled there
@@ -290,21 +293,40 @@
             } else {
                 // No active session
                 if (manualOverlayState.lastSessionKey) {
-                    // Transition: session just ended — overlay stays, title/name cleared
+                    // Session just ended — start 2-hour grace period, keep showing overlay
                     lastActiveSessionKey = null;
                     set(ref(db, 'ceramah_overlay'), {
-                        title: '',   // Cleared after schedule ends
-                        name: '',    // Cleared after schedule ends
-                        isVisible: true, // Overlay stays visible until next session
-                        /* --- AUTOHIDE (commented out, re-enable in future if needed) ---
-                        isVisible: false,
-                        --- END AUTOHIDE --- */
+                        title: manualOverlayState.title,
+                        name: manualOverlayState.name,
+                        isVisible: true,
                         lastSessionKey: null,
+                        sessionEndedAt: Date.now(), // Record end time for 2h delay
                         updatedAt: Date.now()
                     });
                     // Will re-trigger via onValue, UI update handled there
+                } else if (manualOverlayState.sessionEndedAt) {
+                    // In grace period — check if 2 hours have passed
+                    if (Date.now() - manualOverlayState.sessionEndedAt < CLEAR_DELAY_MS) {
+                        // Still within 2 hours — keep showing last session
+                        updateUI(manualOverlayState.name, manualOverlayState.title, true);
+                    } else {
+                        // 2 hours passed — clear overlay content
+                        if (manualOverlayState.name || manualOverlayState.title) {
+                            set(ref(db, 'ceramah_overlay'), {
+                                title: '',
+                                name: '',
+                                isVisible: true,
+                                /* --- AUTOHIDE (commented out, re-enable in future if needed) ---
+                                isVisible: false,
+                                --- END AUTOHIDE --- */
+                                lastSessionKey: null,
+                                sessionEndedAt: null,
+                                updatedAt: Date.now()
+                            });
+                        }
+                    }
                 } else {
-                    // Gap with no prior session — respect isVisible (supports surprise/manual speakers)
+                    // No session history — respect manual state
                     updateUI(manualOverlayState.name, manualOverlayState.title, true);
                 }
             }
