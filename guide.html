@@ -395,6 +395,7 @@
         <!-- Intro -->
         <div class="intro">
             <p>This page controls the <strong>nama penceramah banner</strong> that appears at the bottom of your live stream on YoloBox or OBS. Once your schedule is uploaded, everything runs on its own — this guide will help you handle any situation that comes up during a live broadcast.</p>
+            <p style="margin:10px 0 0 0;">The banner <strong>always stays visible</strong> on stream. Only the text inside it changes — automatically based on the schedule, or manually from this panel.</p>
         </div>
 
         <!-- How It Works -->
@@ -424,11 +425,11 @@
                 </div>
                 <div class="step">
                     <div class="step-num">2</div>
-                    <p>When a session's start time arrives, the banner <strong>appears on its own</strong> showing the program name and speaker. When the session ends, it <strong>disappears on its own</strong>.</p>
+                    <p>When a session's start time arrives, the banner automatically shows the <strong>program name and speaker</strong>. When the session ends, the banner <strong>stays on screen</strong> showing the last speaker for up to <strong>2 hours</strong>, then the text clears until the next session begins.</p>
                 </div>
                 <div class="step">
                     <div class="step-num">3</div>
-                    <p>Use this control panel only when you need to step in — such as fixing a name, hiding the banner, or showing a speaker that is not in the schedule.</p>
+                    <p>Use this control panel only when you need to step in — such as fixing a name or showing a speaker that is not in the schedule.</p>
                 </div>
             </div>
         </div>
@@ -444,23 +445,23 @@
             <div class="scenario-list">
                 <div class="scenario">
                     <div class="scenario-title">✅ Normal session — nothing to do</div>
-                    <p class="scenario-steps">The banner appears and disappears automatically based on the schedule. No action needed.</p>
+                    <p class="scenario-steps">The banner text updates automatically based on the schedule. The banner itself always stays on screen. No action needed.</p>
                 </div>
                 <div class="scenario">
-                    <div class="scenario-title">🙈 You want to hide the banner temporarily</div>
-                    <p class="scenario-steps">Tap <code>HIDE OVERLAY</code>. Tap <code>SHOW OVERLAY</code> when you want it back. The next scheduled session will automatically show the banner again when its time comes.</p>
+                    <div class="scenario-title">⏳ Session just ended — banner still showing</div>
+                    <p class="scenario-steps">This is normal. After a session ends, the last speaker's info stays on the banner for <strong>up to 2 hours</strong>. After 2 hours, the text clears on its own. If the next session starts before then, it will switch automatically.</p>
                 </div>
                 <div class="scenario">
                     <div class="scenario-title">✏️ Speaker name has a typo</div>
-                    <p class="scenario-steps">Edit the name in the Current Event section → tap <code>SAVE CHANGES</code>. The banner updates on screen immediately without flashing or hiding.</p>
+                    <p class="scenario-steps">Edit the name in the <strong>On Overlay</strong> section → tap <code>SAVE CHANGES</code>. The banner updates on screen immediately without flashing.</p>
                 </div>
                 <div class="scenario">
                     <div class="scenario-title">⚡ Speaker starts earlier than scheduled</div>
-                    <p class="scenario-steps">Find the session card in the list → tap <code>Jump to this speaker</code>. The banner switches immediately.</p>
+                    <p class="scenario-steps">Find the session card under <strong>Next Event:</strong> in the list → tap <code>Jump to this speaker</code>. The banner switches immediately.</p>
                 </div>
                 <div class="scenario">
                     <div class="scenario-title">🎤 Surprise or unscheduled speaker</div>
-                    <p class="scenario-steps">Type the program name and speaker name in the Current Event section → tap <code>SHOW OVERLAY</code>. The banner will stay on until you hide it, or until the next scheduled session takes over automatically.</p>
+                    <p class="scenario-steps">Type the program name and speaker name in the <strong>On Overlay</strong> section → tap <code>SAVE CHANGES</code>. The banner will show the new name immediately and stay until the next scheduled session takes over automatically.</p>
                 </div>
                 <div class="scenario">
                     <div class="scenario-title">📅 New day or new event</div>
@@ -524,23 +525,15 @@
                 <div class="section-icon">
                     <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
                 </div>
-                <h2>Current Event Section</h2>
+                <h2>On Overlay Section</h2>
             </div>
-            <p style="font-size:14px;color:var(--text-muted);margin:0 0 14px;">This section always shows what is <strong>currently displayed on the stream banner</strong>. It updates automatically as sessions change. You can also edit it freely at any time.</p>
+            <p style="font-size:14px;color:var(--text-muted);margin:0 0 14px;">This section labelled <strong>On Overlay — Automatic by schedule</strong> always shows what is <strong>currently displayed on the stream banner</strong>. It updates automatically as sessions change. You can also edit it freely at any time.</p>
             <div class="scenario-list">
                 <div class="scenario">
                     <div class="scenario-title">
                         <span class="badge badge-green" style="font-size:11px;">SAVE CHANGES</span>
                     </div>
                     <p class="scenario-steps">Edit the program name or speaker name, then tap this to update what is shown on the stream — <strong>without hiding the banner</strong>. Great for fixing a spelling mistake while you are live.</p>
-                </div>
-                <div class="scenario">
-                    <div class="scenario-title">
-                        <span class="badge badge-red" style="font-size:11px;">HIDE OVERLAY</span>
-                        &nbsp;/&nbsp;
-                        <span class="badge badge-green" style="font-size:11px;">SHOW OVERLAY</span>
-                    </div>
-                    <p class="scenario-steps">One button that toggles the banner on or off. The label and colour change to show you the current state. If the banner is now <strong>visible</strong>, the button shows <em>Hide Overlay</em> (red). If it is <strong>hidden</strong>, the button shows <em>Show Overlay</em> (green).</p>
                 </div>
             </div>
         </div>
@@ -553,7 +546,7 @@
                 </div>
                 <h2>Jump to This Speaker</h2>
             </div>
-            <p style="font-size:14px;color:var(--text-muted);margin:0 0 14px;">Every session card in the list has a <strong>Jump to this speaker</strong> button.</p>
+            <p style="font-size:14px;color:var(--text-muted);margin:0 0 14px;">Every session card under the <strong>Next Event:</strong> label has a <strong>Jump to this speaker</strong> button.</p>
             <div class="step-list">
                 <div class="step">
                     <div class="step-num">→</div>
@@ -580,11 +573,11 @@
                     <tr><th>Action</th><th>How fast</th></tr>
                 </thead>
                 <tbody>
-                    <tr><td>Pressing Hide / Show Overlay</td><td><strong>Instant</strong></td></tr>
                     <tr><td>Pressing Save Changes</td><td><strong>Instant</strong></td></tr>
                     <tr><td>Pressing Jump to this speaker</td><td><strong>Instant</strong></td></tr>
-                    <tr><td>Automatic session start or end</td><td><strong>Within 10 seconds</strong></td></tr>
-                    <tr><td>Finished sessions disappear from list</td><td><strong>Within 10 seconds</strong></td></tr>
+                    <tr><td>Automatic session start</td><td><strong>Within 10 seconds</strong></td></tr>
+                    <tr><td>Overlay text clears (2h after session ends)</td><td><strong>Within 10 seconds</strong></td></tr>
+                    <tr><td>Past sessions disappear from list</td><td><strong>Within 10 seconds</strong></td></tr>
                 </tbody>
             </table>
             </div>
