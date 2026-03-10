@@ -526,12 +526,14 @@
                 <div id="list-state" style="display: none;">
                     <button class="btn-outline" onclick="resetSchedule()"
                         style="padding: 10px; margin-bottom: 12px; font-size: 14px;">Reset Schedule</button>
+                    <div style="font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px;">Next Event:</div>
                     <div id="csvDataContainer" class="session-list"></div>
                 </div>
             </div>
 
             <div class="section">
-                <h3 class="section-title">Current Event</h3>
+                <h3 class="section-title">On Overlay</h3>
+                <p style="margin: -12px 0 12px 0; font-size: 12px; color: var(--text-muted); font-weight: 600;">Automatic by schedule</p>
                 <input type="text" id="inputTitle" placeholder="Program Title (e.g. Kuliah Maghrib)"
                     value="Penceramah Jemputan" style="margin-bottom: 12px;">
                 <input type="text" id="inputName" placeholder="Nama Penceramah...">
@@ -539,7 +541,7 @@
 
             <div class="btn-group">
                 <button class="btn-show" onclick="saveChanges()">SAVE CHANGES</button>
-                <button class="btn-hide" id="toggleVisibilityBtn" onclick="toggleVisibility()">HIDE OVERLAY</button>
+                <!-- <button class="btn-hide" id="toggleVisibilityBtn" onclick="toggleVisibility()">HIDE OVERLAY</button> -->
             </div>
         </div>
     </div>
@@ -562,8 +564,8 @@
 
     <script src="./firebase-config.js"></script>
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
-        import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-database.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+        import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-database.js";
 
         // Helper to parse DD/MM/YYYY and HH:MM:SS
         const parseDateTime = (d, t) => {

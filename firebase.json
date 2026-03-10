@@ -8,5 +8,8 @@
       "README.md",
       "test_schedule.csv"
     ]
+  },
+  "database": {
+    "rules": "database.rules.json"
   }
 }

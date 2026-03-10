@@ -1,0 +1,16 @@
+{
+  "rules": {
+    "ceramah_overlay": {
+      ".read": true,
+      ".write": true
+    },
+    "ceramah_schedule": {
+      ".read": true,
+      ".write": true
+    },
+    "$other": {
+      ".read": false,
+      ".write": false
+    }
+  }
+}

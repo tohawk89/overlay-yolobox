@@ -217,8 +217,8 @@
 
     <script src="./firebase-config.js"></script>
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
-        import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-database.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+        import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-database.js";
 
         const app = initializeApp(window.firebaseConfig);
         const db = getDatabase(app);
@@ -243,13 +243,18 @@
             const titleDisplay = document.getElementById('displayTitle');
 
             nameDisplay.innerText = name || '';
-            if (title) titleDisplay.innerText = title;
+            titleDisplay.innerText = title || '';
 
+            // Overlay always stays visible — title/name will be empty between sessions
+            container.classList.add('visible');
+
+            /* --- SHOW/HIDE LOGIC (commented out, re-enable in future if needed) ---
             if (isVisible) {
                 container.classList.add('visible');
             } else {
                 container.classList.remove('visible');
             }
+            --- END SHOW/HIDE LOGIC --- */
         }
 
         function checkAutomaticSchedule() {
@@ -285,19 +290,22 @@
             } else {
                 // No active session
                 if (manualOverlayState.lastSessionKey) {
-                    // Transition: session just ended (detected via Firebase lastSessionKey) — force hide
+                    // Transition: session just ended — overlay stays, title/name cleared
                     lastActiveSessionKey = null;
                     set(ref(db, 'ceramah_overlay'), {
-                        title: manualOverlayState.title,
-                        name: manualOverlayState.name,
+                        title: '',   // Cleared after schedule ends
+                        name: '',    // Cleared after schedule ends
+                        isVisible: true, // Overlay stays visible until next session
+                        /* --- AUTOHIDE (commented out, re-enable in future if needed) ---
                         isVisible: false,
+                        --- END AUTOHIDE --- */
                         lastSessionKey: null,
                         updatedAt: Date.now()
                     });
                     // Will re-trigger via onValue, UI update handled there
                 } else {
-                    // Gap with no prior session — Option B: respect isVisible (supports surprise/manual speakers)
-                    updateUI(manualOverlayState.name, manualOverlayState.title, manualOverlayState.isVisible);
+                    // Gap with no prior session — respect isVisible (supports surprise/manual speakers)
+                    updateUI(manualOverlayState.name, manualOverlayState.title, true);
                 }
             }
         }
