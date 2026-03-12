@@ -7,9 +7,7 @@
     <title>Stream Overlay (Ceramah Agama)</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;700;800&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
             --blue-masjid: #11429b;
@@ -260,6 +258,8 @@
         function checkAutomaticSchedule() {
             const now = new Date();
             let activeSession = null;
+            let recentlyEndedSession = null;
+            const CLEAR_DELAY_MS = 2 * 60 * 60 * 1000; // 2 hours after session ends
 
             if (Array.isArray(scheduleData)) {
                 activeSession = scheduleData.find(item => {
@@ -267,9 +267,23 @@
                     const end = parseDateTime(item.endDate, item.endTime);
                     return start && end && now >= start && now <= end;
                 });
-            }
 
-            const CLEAR_DELAY_MS = 2 * 60 * 60 * 1000; // 2 hours after session ends
+                if (!activeSession) {
+                    // Find if any session ended within the last 2 hours
+                    const pastSessions = scheduleData.filter(item => {
+                        const end = parseDateTime(item.endDate, item.endTime);
+                        return end && now > end && (now.getTime() - end.getTime()) < CLEAR_DELAY_MS;
+                    }).sort((a, b) => {
+                        const endA = parseDateTime(a.endDate, a.endTime);
+                        const endB = parseDateTime(b.endDate, b.endTime);
+                        return endB.getTime() - endA.getTime();
+                    });
+
+                    if (pastSessions.length > 0) {
+                        recentlyEndedSession = pastSessions[0];
+                    }
+                }
+            }
 
             if (activeSession) {
                 const sessionKey = `${activeSession.startDate}_${activeSession.startTime}`;
@@ -292,6 +306,27 @@
                 }
             } else {
                 // No active session
+
+                // If we found a session that ended less than 2 hours ago from the schedule
+                if (recentlyEndedSession) {
+                    const end = parseDateTime(recentlyEndedSession.endDate, recentlyEndedSession.endTime);
+                    const isFirebaseEmpty = !manualOverlayState.lastSessionKey && !manualOverlayState.sessionEndedAt && !manualOverlayState.name;
+
+                    // If Firebase is entirely empty, or it currently tracks a wrong/outdated grace period
+                    if (isFirebaseEmpty || (manualOverlayState.sessionEndedAt && manualOverlayState.sessionEndedAt !== end.getTime() && !manualOverlayState.lastSessionKey)) {
+                        lastActiveSessionKey = null;
+                        set(ref(db, 'ceramah_overlay'), {
+                            title: recentlyEndedSession.subject,
+                            name: recentlyEndedSession.description,
+                            isVisible: true,
+                            lastSessionKey: null,
+                            sessionEndedAt: end.getTime(), // Start grace countdown from the EXACT schedule end time
+                            updatedAt: Date.now()
+                        });
+                        return; // Wait for Firebase onValue to trigger UI update
+                    }
+                }
+
                 if (manualOverlayState.lastSessionKey) {
                     // Session just ended — start 2-hour grace period, keep showing overlay
                     lastActiveSessionKey = null;
